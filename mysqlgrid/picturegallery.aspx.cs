@@ -51,19 +51,22 @@ namespace mysqlgrid
         protected void Button2_Click(object sender, EventArgs e)
         {
             //INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));
-            string constr = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+            string constr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
             int imageindex = 2345;
-            string filedirectory = "LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG')";
+            //string filedirectory = "LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG')";
+            //INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));
 
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                string query = "INSERT INTO estateporrtal.images(`imageindex`, `image`) VALUES (@imageindex, @filedirectory)";
+                //string query = "INSERT INTO estateporrtal.images(`imageindex`, `image`) VALUES (@imageindex, @filedirectory)";
+                string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));";
+
 
                 using (MySqlCommand cmd = new MySqlCommand(query))
                 {
                     cmd.Connection = con;
-                    cmd.Parameters.AddWithValue("@imageindex", imageindex);
-                    cmd.Parameters.AddWithValue("@filedirectory", filedirectory);
+                //    cmd.Parameters.AddWithValue("@imageindex", imageindex);
+                //    cmd.Parameters.AddWithValue("@filedirectory", filedirectory);
                     con.Open();
                     cmd.ExecuteNonQuery();
                     con.Close();
