@@ -58,10 +58,7 @@ namespace mysqlgrid
 
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                //string query = "INSERT INTO estateporrtal.images(`imageindex`, `image`) VALUES (@imageindex, @filedirectory)";
                 string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));";
-
-
                 using (MySqlCommand cmd = new MySqlCommand(query))
                 {
                     cmd.Connection = con;
