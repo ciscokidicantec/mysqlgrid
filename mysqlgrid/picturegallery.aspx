@@ -19,6 +19,13 @@
             <asp:Button ID="Button3" runat="server" OnClick="Button3_Click" Text="Stored Procedure To Insert BLOB" />
             <br />
             <br />
+            <br />
+            <asp:ListBox ID="ListBox1" runat="server" Height="357px" Width="1538px"></asp:ListBox>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
             <asp:Label ID="Label1" runat="server" Text="Not Started Yet."></asp:Label>
             <br />
             <br />

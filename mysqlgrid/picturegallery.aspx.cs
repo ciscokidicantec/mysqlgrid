@@ -8,7 +8,6 @@ using System.IO;
 using MySql.Data.MySqlClient;
 using System.Configuration;
 
-
 namespace mysqlgrid
 {
     public partial class picturegallery : System.Web.UI.Page
@@ -98,34 +97,84 @@ namespace mysqlgrid
 
         protected void Button3_Click(object sender, EventArgs e)
         {
-            //   using System;
-            //   using System.Data;
-
-            //    using MySql.Data;
-            //    using MySql.Data.MySqlClient;
-
+            Guid estate_guid;
             string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
-            //string connStr = "server=localhost;user=root;database=world;port=3306;password=******";
             MySqlConnection conn = new MySqlConnection(connStr);
+            string query = "";
+            MySqlCommand mycmd = new MySqlCommand(query);
+
+            string mydirerror;
+            string[] dirs = Directory.GetDirectories(@"c:\\", "ProgramData\\MySQL\\MySQL Server 8.0\\Uploads");
+            int Howmanyfiles = dirs.Count();
+            // Loop through them to see if they have any other subdirectories
+            foreach (string subdirectory in dirs)
+            {
+                try
+                {
+                    string[] array2 = Directory.GetFiles(subdirectory, "*.jpg");
+                    string myfilename = "";
+                    int imageindex = 0;
+                    //system.char guidchar;
+                    //MySqlConnection 
+                    //MySqlCommand mycmd;
+                    conn.Open();
+                    foreach (string name in array2)
+                    {
+                        myfilename = Path.GetFileName(name);
+                        imageindex += 1;
+                        estate_guid = Guid.NewGuid();
+
+                        query = "INSERT INTO estateporrtal.images (`imageindex`,`image`, `myguid`) VALUES (" + imageindex + ", LOAD_FILE(" + "'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/" + myfilename + "')" + ",'" + estate_guid + "');";
+                        mycmd = new MySqlCommand(query);
+                        mycmd.Connection = conn;
+                        mycmd.ExecuteNonQuery();
+                        mycmd.Dispose();
+                    }
+                    conn.Close();
+                    conn.Dispose();
+                    Label1.Text = "Completed";
+                }
+                catch (Exception ex)
+                {
+                    mydirerror = ex.Message;
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+
+            estate_guid = Guid.NewGuid();
+
 
             string rtn = "sploadimage";     //Stored Procedure Name
+            Int32 getbackindex;
             MySqlCommand cmd = new MySqlCommand(rtn, conn);
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            //cmd.CommandType = CommandType.StoredProcedure;
-
-            //cmd.Parameters.AddWithValue("@imageindex", 500);
-            cmd.Parameters.AddWithValue("@idx", 500);
+            cmd.Parameters.AddWithValue("@idx", 601);
             cmd.Parameters.AddWithValue("@myfilename", "h.jpg");
+            cmd.Parameters.AddWithValue("@myguid", estate_guid);
+         //   cmd.Parameters.AddWithValue("seeindex", getbackindex);
+
+
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
             try
             {
                 //Connecting to MySQL.
                 conn.Open();
 
+              //  int liststr = 0;
+                //string displayitem = "";
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
+                    //ListBox1.Items.item.Add(rdr(0));
+                    //getbackindex = rdr.GetInt32("imageindex");
+                    getbackindex = rdr.GetInt32(0);
+                    //ListBox1.Items.Add(lis+tstr);
+
+                 //   lbFound.Items.Add(rdr["FirstName"].ToString() +
+                 //   " " + rdr["LastName"].ToString());
+
                     Console.WriteLine(rdr[0] + " --- " + rdr[1]);
                 }
                 rdr.Close();
