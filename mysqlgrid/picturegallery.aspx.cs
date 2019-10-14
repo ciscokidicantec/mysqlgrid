@@ -38,7 +38,7 @@ namespace mysqlgrid
                 imageButton.Height = Unit.Pixel(450);
                 imageButton.Style.Add("padding", "5px");
                 //imageButton.Width = Unit.Pixel(100);
-                imageButton.Click += new ImageClickEventHandler(imageButton_Click);
+                imageButton.Click += new ImageClickEventHandler(ImageButton_Click);
                 Panel1.Controls.Add(imageButton);
             }
 
@@ -108,12 +108,14 @@ namespace mysqlgrid
             //string connStr = "server=localhost;user=root;database=world;port=3306;password=******";
             MySqlConnection conn = new MySqlConnection(connStr);
 
-            string rtn = "country_hos";
+            string rtn = "sploadimage";     //Stored Procedure Name
             MySqlCommand cmd = new MySqlCommand(rtn, conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            // cmd.CommandType = CommandType.StoredProcedure;
+            //cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@con", "Europe");
+            //cmd.Parameters.AddWithValue("@imageindex", 500);
+            cmd.Parameters.AddWithValue("@idx", 500);
+            cmd.Parameters.AddWithValue("@myfilename", "h.jpg");
 
             try
             {
