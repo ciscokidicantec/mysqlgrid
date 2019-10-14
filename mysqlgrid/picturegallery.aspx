@@ -15,6 +15,13 @@
             <br />
             <asp:Button ID="Button2" runat="server" OnClick="Button2_Click" Text="FILE LOAD INSERT BLOB" Width="283px" />
             <br />
+            <br />
+            <asp:Button ID="Button3" runat="server" OnClick="Button3_Click" Text="Stored Procedure To Insert BLOB" />
+            <br />
+            <br />
+            <asp:Label ID="Label1" runat="server" Text="Not Started Yet."></asp:Label>
+            <br />
+            <br />
             <asp:Panel ID="Panel1" runat="server" Width="1500px" BorderStyle="Groove" BorderColor="#000066">
             </asp:Panel>
         </div>

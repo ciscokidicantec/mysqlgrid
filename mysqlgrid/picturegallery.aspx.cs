@@ -41,9 +41,10 @@ namespace mysqlgrid
                 imageButton.Click += new ImageClickEventHandler(imageButton_Click);
                 Panel1.Controls.Add(imageButton);
             }
+
         }
 
-        protected void imageButton_Click(object sender, ImageClickEventArgs e)
+        protected void ImageButton_Click(object sender, ImageClickEventArgs e)
         {
             Response.Redirect("webform2.aspx?ImageURL=" + ((ImageButton)sender).ImageUrl);
         }
@@ -52,24 +53,90 @@ namespace mysqlgrid
         {
             //INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));
             string constr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
-            int imageindex = 2345;
-            //string filedirectory = "LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG')";
-            //INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));
+            int imageindex = 8000;
+            string myfilename;
+
+            Label1.Text = "Just Started";
 
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (1602, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/101D0578.JPG'));";
-                using (MySqlCommand cmd = new MySqlCommand(query))
-                {
-                    cmd.Connection = con;
                 //    cmd.Parameters.AddWithValue("@imageindex", imageindex);
                 //    cmd.Parameters.AddWithValue("@filedirectory", filedirectory);
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    con.Close();
-                    con.Dispose();
+
+                string mydirerror;
+                string[] dirs = Directory.GetDirectories(@"c:\\", "ProgramData\\MySQL\\MySQL Server 8.0\\Uploads");
+
+                // Loop through them to see if they have any other subdirectories
+                foreach (string subdirectory in dirs)
+                {
+                    try
+                    {
+                        string[] array2 = Directory.GetFiles(subdirectory, "*.jpg");
+                        con.Open();
+                        foreach (string name in array2)
+                        {
+                            myfilename = Path.GetFileName(name);
+                            imageindex += 1;
+                            string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (" + imageindex + ", LOAD_FILE(" + "'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/" + myfilename + "'));";
+                            //string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`) VALUES (" + imageindex + ", LOAD_FILE('" + myfilename + "'));";
+                            MySqlCommand cmd = new MySqlCommand(query);
+                            cmd.Connection = con;
+                            cmd.ExecuteNonQuery();
+                            cmd.Dispose();
+                        }
+                        con.Close();
+                        con.Dispose();
+                        Label1.Text = "Completed";
+                    }
+                    catch (Exception ex)
+                    {
+                        mydirerror = ex.Message;
+                    }
                 }
             }
         }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            //   using System;
+            //   using System.Data;
+
+            //    using MySql.Data;
+            //    using MySql.Data.MySqlClient;
+
+            string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
+            //string connStr = "server=localhost;user=root;database=world;port=3306;password=******";
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            string rtn = "country_hos";
+            MySqlCommand cmd = new MySqlCommand(rtn, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            // cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@con", "Europe");
+
+            try
+            {
+                //Connecting to MySQL.
+                conn.Open();
+
+
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    Console.WriteLine(rdr[0] + " --- " + rdr[1]);
+                }
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            conn.Close();
+            Console.WriteLine("Done.");
+        }
     }
+
 }
+
