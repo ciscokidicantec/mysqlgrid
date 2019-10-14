@@ -147,11 +147,15 @@ namespace mysqlgrid
 
             string rtn = "sploadimage";     //Stored Procedure Name
             Int32 getbackindex;
+            int myrecordseffected = 0;
             MySqlCommand cmd = new MySqlCommand(rtn, conn);
             cmd.Parameters.AddWithValue("@idx", 601);
             cmd.Parameters.AddWithValue("@myfilename", "h.jpg");
             cmd.Parameters.AddWithValue("@myguid", estate_guid);
-         //   cmd.Parameters.AddWithValue("seeindex", getbackindex);
+            cmd.Parameters["@myguid"].Direction = System.Data.ParameterDirection.InputOutput;
+            cmd.Parameters["@idx"].Direction = System.Data.ParameterDirection.InputOutput;
+
+            //   cmd.Parameters.AddWithValue("seeindex", getbackindex);
 
 
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
@@ -165,17 +169,18 @@ namespace mysqlgrid
                 //string displayitem = "";
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
+                myrecordseffected = rdr.RecordsAffected;
+
+                GridView1.DataSource = rdr;
+                GridView1.DataBind();
+
+                //return;
+
+                // while (rdr.HasRows)
                 while (rdr.Read())
                 {
-                    //ListBox1.Items.item.Add(rdr(0));
-                    //getbackindex = rdr.GetInt32("imageindex");
-                    getbackindex = rdr.GetInt32(0);
-                    //ListBox1.Items.Add(lis+tstr);
-
-                 //   lbFound.Items.Add(rdr["FirstName"].ToString() +
-                 //   " " + rdr["LastName"].ToString());
-
-                    Console.WriteLine(rdr[0] + " --- " + rdr[1]);
+                    getbackindex = rdr.GetInt32("imageindex");
+                    ListBox1.Items.Add(rdr["imageindex"].ToString() +  " " + rdr["myguid"].ToString());
                 }
                 rdr.Close();
             }

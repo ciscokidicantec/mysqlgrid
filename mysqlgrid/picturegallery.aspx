@@ -20,6 +20,11 @@
             <br />
             <br />
             <br />
+            <asp:GridView ID="GridView1" runat="server" Width="546px">
+            </asp:GridView>
+            <br />
+            <br />
+            <br />
             <asp:ListBox ID="ListBox1" runat="server" Height="357px" Width="1538px"></asp:ListBox>
             <br />
             <br />
