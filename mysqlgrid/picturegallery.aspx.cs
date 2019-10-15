@@ -145,24 +145,28 @@ namespace mysqlgrid
             estate_guid = Guid.NewGuid();
 
 
-            string rtn = "sploadimage";     //Stored Procedure Name
+            //string rtn = "sploadimage";     //Stored Procedure Name
+            string rtn = "spoutrecords";
+
             int getbackindex;
             int myrecordseffected = 0;
-            MySqlCommand cmd = new MySqlCommand(rtn, conn);
-            cmd.Parameters.AddWithValue("@idx", 601);
-            cmd.Parameters.AddWithValue("@myfilename", "h.jpg");
-            cmd.Parameters.AddWithValue("@myguid", estate_guid);
-            cmd.Parameters["@myguid"].Direction = System.Data.ParameterDirection.InputOutput;
-            cmd.Parameters["@idx"].Direction = System.Data.ParameterDirection.InputOutput;
+            //cmd.Parameters.AddWithValue("@idx", 601);
+            //cmd.Parameters.AddWithValue("@myfilename", "h.jpg");
+            //cmd.Parameters.AddWithValue("@myguid", estate_guid);
+            //cmd.Parameters["@myguid"].Direction = System.Data.ParameterDirection.InputOutput;
+
+            //cmd.Parameters.Add("idx", MySqlDbType.Int32).Value = 666;
+            //cmd.Parameters["@idx"].Direction = System.Data.ParameterDirection.InputOutput;
+
 
             //   cmd.Parameters.AddWithValue("seeindex", getbackindex);
 
 
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
             try
             {
                 //Connecting to MySQL.
+                MySqlCommand cmd = new MySqlCommand(rtn, conn);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 conn.Open();
 
               //  int liststr = 0;
@@ -170,17 +174,19 @@ namespace mysqlgrid
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 myrecordseffected = rdr.RecordsAffected;
+
                 string returnedguid;
                 string message = " Not Found 601";
 
                 GridView1.DataSource = rdr;
                 GridView1.DataBind();
 
-                //return;
-
+                return;
+                int myidx = 0;
                 // while (rdr.HasRows)
                 while (rdr.Read())
                 {
+                    myidx += 1;
                     getbackindex = rdr.GetInt32("imageindex");
                     if (getbackindex == 601)
                     {
@@ -191,7 +197,7 @@ namespace mysqlgrid
 
                     //getbackindex = rdr["imageindex"];
 
-                    //ListBox1.Items.Add(rdr["imageindex"].ToString() +  " " + rdr["myguid"].ToString());
+                    ListBox1.Items.Add("Counter = " + myidx + "     " + rdr["imageindex"].ToString() +  " " + rdr["myguid"].ToString());
                 }
                 rdr.Close();
             }

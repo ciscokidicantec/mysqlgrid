@@ -18,22 +18,28 @@ namespace mysqlgrid
         {
 
             string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
-            string query = "SELECT * FROM estateporrtal.images";
+            //string query = "SELECT * FROM estateporrtal.images";
             MySqlConnection conn = new MySqlConnection(connStr);
-            MySqlCommand mycmd = new MySqlCommand(query,conn);
-            MySqlDataAdapter da = new MySqlDataAdapter(mycmd);
+            //MySqlCommand mycmd = new MySqlCommand(query,conn);
+            //MySqlDataAdapter da = new MySqlDataAdapter(mycmd);
+            string rtn = "spoutrecords";
+            MySqlCommand mycmd = new MySqlCommand(rtn, conn);
+            mycmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-            DataTable table = new DataTable();
-            da.Fill(table);
+            MySqlDataReader rdr = mycmd.ExecuteReader();
 
-    //< asp:Image ID = "Image1" runat = "server" Height = "250" imageurl = '<%#"data:Image/png;base64," + Convert.ToBase64String((byte[])Eval("image"))%>' />
 
-            GridView1.DataSource = table;
+            //DataTable table = new DataTable();
+            //da.Fill(table);
+
+            //< asp:Image ID = "Image1" runat = "server" Height = "250" imageurl = '<%#"data:Image/png;base64," + Convert.ToBase64String((byte[])Eval("image"))%>' />
+
+            GridView1.DataSource = rdr;
             GridView1.DataBind();
 
-            table.Dispose();
+            //table.Dispose();
             mycmd.Dispose();
-            da.Dispose();
+            //da.Dispose();
         }
 
         protected void Button1_Click(object sender, EventArgs e)
