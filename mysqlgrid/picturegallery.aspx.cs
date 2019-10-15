@@ -146,7 +146,7 @@ namespace mysqlgrid
 
 
             string rtn = "sploadimage";     //Stored Procedure Name
-            Int32 getbackindex;
+            int getbackindex;
             int myrecordseffected = 0;
             MySqlCommand cmd = new MySqlCommand(rtn, conn);
             cmd.Parameters.AddWithValue("@idx", 601);
@@ -170,6 +170,8 @@ namespace mysqlgrid
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 myrecordseffected = rdr.RecordsAffected;
+                string returnedguid;
+                string message = " Not Found 601";
 
                 GridView1.DataSource = rdr;
                 GridView1.DataBind();
@@ -180,7 +182,16 @@ namespace mysqlgrid
                 while (rdr.Read())
                 {
                     getbackindex = rdr.GetInt32("imageindex");
-                    ListBox1.Items.Add(rdr["imageindex"].ToString() +  " " + rdr["myguid"].ToString());
+                    if (getbackindex == 601)
+                    {
+                        message = "Found 601";
+                    }
+                    //getbackindex = rdr["imageindex"].ToString(); // Convert.ToBase64String((byte[])Eval("image"))
+                    //getbackindex = Convert.ToString(rdr["imageindex"]);
+
+                    //getbackindex = rdr["imageindex"];
+
+                    //ListBox1.Items.Add(rdr["imageindex"].ToString() +  " " + rdr["myguid"].ToString());
                 }
                 rdr.Close();
             }

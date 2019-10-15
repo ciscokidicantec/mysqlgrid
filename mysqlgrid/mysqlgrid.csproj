@@ -72,12 +72,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="getblob.aspx" />
     <Content Include="mygridview.aspx" />
     <Content Include="picturegallery.aspx" />
     <Content Include="Web.config" />
     <Content Include="WebForm2.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="getblob.aspx.cs">
+      <DependentUpon>getblob.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="getblob.aspx.designer.cs">
+      <DependentUpon>getblob.aspx</DependentUpon>
+    </Compile>
     <Compile Include="mygridview.aspx.cs">
       <DependentUpon>mygridview.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
