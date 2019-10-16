@@ -9,7 +9,13 @@ using System.IO;
 using System.Drawing;
 //using System.Drawing.Imaging;
 using System.Web.UI.WebControls;
+//using Image = System.Web.UI.WebControls.Image;
+//using System.Drawing.Drawing2;
 //using System.Drawing.Image;
+
+using System.Drawing.Drawing2D;
+
+
 
 namespace mysqlgrid
 {
@@ -22,54 +28,35 @@ namespace mysqlgrid
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            string imageUrl = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
-            string fileName = "C:\\Compress\\h.jpg";
-            string iconPath = "";
-            string uri = "";
+            String[] arrayurlimage = new String[4];
 
-            WebClient client = new WebClient();
-                byte[] pic = client.DownloadData(iconPath);
-                //string checkPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +@"\1.png";
-                //File.WriteAllBytes(checkPath, pic);
-//                return pic;
+            arrayurlimage[0] =  "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+            arrayurlimage[1] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
+            arrayurlimage[2] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
+            arrayurlimage[3] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+         //   arrayurlimage[4] = "https://www.rightmove.co.uk/property-for-sale/fullscreen/image-gallery.html?propertyId=64668300&photoIndex=4#";
 
-            Stream stream = client.OpenRead(imageUrl);
+            string fileName = "";
+            WebClient client;
+            Stream stream;
+            Bitmap bitmap;
 
-            Bitmap bitmap = new Bitmap(stream); // Error : Parameter is not valid.
-            stream.Flush();
-            stream.Close();
-            client.Dispose();
+            int fileindex = 0;
 
-            if (bitmap != null)
+            foreach (string imageUrl in arrayurlimage)
             {
-                bitmap.Save("D:\\Images\\" + fileName + ".jpg");
-            }
+                fileindex += 1;
+               fileName = "C:\\Compress\\" + "downloaded " + fileindex.ToString() + ".jpg";
+                client = new WebClient();
+                stream = client.OpenRead(imageUrl);
+                bitmap = new Bitmap(stream);
 
-           WebRequest requestPic = WebRequest.Create(imageUrl);
-           WebResponse responsePic = requestPic.GetResponse();
-           Image webImage = System.Web.UI.WebControls.Image.FromStream(responsePic.GetResponseStream()); // Error
-           webImage.Save("D:\\Images\\Book\\" + fileName + ".jpg");
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            if ((response.StatusCode == HttpStatusCode.OK ||
-                response.StatusCode == HttpStatusCode.Moved ||
-                response.StatusCode == HttpStatusCode.Redirect) &&
-                response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
-            {
-                using (Stream inputStream = response.GetResponseStream())
-                using (Stream outputStream = File.OpenWrite(fileName))
+                if (bitmap != null)
                 {
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-                    do
-                    {
-                        bytesRead = inputStream.Read(buffer, 0, buffer.Length);
-                        outputStream.Write(buffer, 0, bytesRead);
-                    } while (bytesRead != 0);
+                    bitmap.Save(fileName);
+                    bitmap.Dispose();
                 }
             }
         }
-    }
+    } 
 }
