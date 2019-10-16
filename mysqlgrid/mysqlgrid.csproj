@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="downloadimage.aspx" />
     <Content Include="getblob.aspx" />
     <Content Include="mygridview.aspx" />
     <Content Include="picturegallery.aspx" />
@@ -79,6 +80,13 @@
     <Content Include="WebForm2.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="downloadimage.aspx.cs">
+      <DependentUpon>downloadimage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="downloadimage.aspx.designer.cs">
+      <DependentUpon>downloadimage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="getblob.aspx.cs">
       <DependentUpon>getblob.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
