@@ -209,7 +209,22 @@ namespace mysqlgrid
             conn.Close();
             Console.WriteLine("Done.");
         }
-    }
 
+        protected void Button4_Click(object sender, EventArgs e)
+        {
+            //string mydirerror;
+            string[] dirs = Directory.GetDirectories(@"c:\\", "ProgramData\\MySQL\\MySQL Server 8.0\\Uploads");
+            int Howmanyfiles = dirs.Count();
+            // Loop through them to see if they have any other subdirectories
+
+            foreach (string subdirectory in dirs)
+            {
+               string[] array2 = Directory.GetFiles(subdirectory, "*.jpg");
+               string csvString = string.Join(",", array2);
+            }
+        }
+
+    }
 }
+
 
