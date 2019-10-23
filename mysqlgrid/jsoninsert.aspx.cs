@@ -26,51 +26,37 @@ namespace mysqlgrid
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Guid estate_guid;
-
-            estate_guid = Guid.NewGuid();
-
-
-//            GameObject[] houses = new GameObject[200];
-
-//            for (int i = 0;`i < house` i < houses.length; i++)
-//            { houses[i] = new GameObject(); }
-
-
-            Images[] images = new Images[200];
-
-            //images.
-
-            for (int i = 0 ; i < images.Length ;  i++)
-            {
-                images[i] = new Images();
-            }
-
-            //Images[] image1 = new Images[5];
-
-            //image1 = new Images[1];
-
-
-// NEED TO GET DIRECTORY FILES ARRAY AND PLACE INTO THIS STRUCTURE READY FOR SERIALISATION.
-
-
-            images[0].myindex = "345";
-            images[0].imagepath = "h.jpg";
-            images[0].myguid = estate_guid.ToString();
-
-            estate_guid = Guid.NewGuid();
-
-            images[1].myindex = "456";
-            images[1].imagepath = "helenedited.jpg";
-            images[1].myguid = estate_guid.ToString();
+            string[] mydirs = Directory.GetDirectories(@"c:\\", "ProgramData\\MySQL\\MySQL Server 8.0\\Uploads");
+            int Totalfiles = mydirs.Count();
+            // Loop through them to see if they have any other subdirectories
 
             List<Images> listimages = new List<Images>();
+            Guid estate_guid;
 
-            listimages.Add(images[0]);
-            listimages.Add(images[1]);
+            foreach (string subdirectory in mydirs)
+            {
+                string[] array2 = Directory.GetFiles(subdirectory, "*.jpg");
+                string csvString = string.Join(",", array2);
+
+                Images[] images = new Images[array2.Length];
+
+                for (int i = 0; i < array2.Length; i++)
+                {
+                    estate_guid = Guid.NewGuid();
+                    images[i] = new Images();
+                    images[i].myindex = i.ToString();
+                    images[i].imagepath = array2[i];
+                    images[i].myguid = estate_guid.ToString();
+
+                    listimages.Add(images[i]);
+
+                }
+            }
 
             JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
             string jsonString = javaScriptSerializer.Serialize(listimages);
+
+            // jsonString.Split(jsonString,"}");
 
             Response.Write(jsonString);
 
