@@ -32,6 +32,8 @@ namespace mysqlgrid
             int Totalfiles = mydirs.Count();
             // Loop through them to see if they have any other subdirectories
 
+ //           string filenameonly;
+
             List<Images> listimages = new List<Images>();
             Guid estate_guid;
 
@@ -47,7 +49,8 @@ namespace mysqlgrid
                     estate_guid = Guid.NewGuid();
                     images[i] = new Images();
                     images[i].myindex = i.ToString();
-                    images[i].imagepath = array2[i];
+                //    images[i].imagepath = array2[i];
+                    images[i].imagepath = Path.GetFileName(array2[i]);
                     images[i].myguid = estate_guid.ToString();
 
                     listimages.Add(images[i]);
@@ -82,14 +85,34 @@ namespace mysqlgrid
             grdJSON2Grid.DataSource = myImages;
             grdJSON2Grid.DataBind();
 
-//            DataTable dt = new DataTable();
-//            dt.Columns.Add("File");
-//            dt.Columns.Add("Size");
-//            dt.Columns.Add("Type");
+            DataTable dt = new DataTable();
+            //            dt.Columns.Add("File");
+            //            dt.Columns.Add("Size");
+            //            dt.Columns.Add("Type");
 
 
             //Using DataTable with JsonConvert.DeserializeObject, here you need to import using System.Data;
             // dt = (List<Images>)myjavaScriptSerializer.Deserialize(jsonString, typeof(List<Images>));
+
+            JavaScriptSerializer myjavaScriptdatatabledeSerializer = new JavaScriptSerializer();
+
+            //Random json string, No fix number of columns or rows and no fix column name.   
+            //           string myDynamicJSON = "[{'Member ID':'00012','First Name':'Vicki','Last Name':'Jordan','Registered Email':'vicki.j @tacinc.com.au','Mobile':'03 6332 3800','MailSuburb':'','MailState':'','MailPostcode':'','Engagement':'attended an APNA event in the past and ventured onto our online education portal APNA Online Learning','Group':'Non-member'},{'Member ID':'15072','First Name':'Vicki','Last Name':'Jordan','Registered Email':'vicki.j @tacinc.com.au','Mobile':'03 6332 3800','MailSuburb':'','MailState':'','MailPostcode':'','Engagement':'attended an APNA event in the past and ventured onto our online education portal APNA Online Learning','Group':'Non-member'}]";
+
+            //Using dynamic keyword with JsonConvert.DeserializeObject, here you need to import Newtonsoft.Json  
+            //           dynamic myObject = myjavaScriptdatatabledeSerializer.DeserializeObject(myDynamicJSON);
+
+            //Binding gridview from dynamic object   
+            //           grdJSON2Grid.DataSource = myObject;
+            //           grdJSON2Grid.DataBind();
+
+            //Using DataTable with JsonConvert.DeserializeObject, here you need to import using System.Data;  
+            //           DataTable myObjectDT = myjavaScriptdatatabledeSerializer.DeserializeObject<DataTable>(myDynamicJSON);
+
+            //Binding gridview from dynamic object   
+            //           grdJSON2Grid2.DataSource = myObjectDT;
+            //           grdJSON2Grid2.DataBind();
+
             dynamic myObject = myjavaScriptSerializer.Deserialize(jsonString, typeof(List<Images>));
 
             //Binding gridview from dynamic object   
@@ -110,6 +133,8 @@ namespace mysqlgrid
 
             int myrecordseffected = 0;
 
+            return;
+
             MySqlDataReader rdr = cmd.ExecuteReader();
             myrecordseffected = rdr.RecordsAffected;
 
@@ -118,9 +143,9 @@ namespace mysqlgrid
 
             conn.Close();
             conn.Dispose();
-            cmd.Dispose();
 
-        }
+        
+    }
 
         protected void Button1_Click(object sender, EventArgs e)
         {
