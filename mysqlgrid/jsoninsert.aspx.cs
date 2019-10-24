@@ -17,6 +17,8 @@ using System.Configuration;
 using System.Text;
 using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
+using System.Data;
+
 
 
 
@@ -60,33 +62,66 @@ namespace mysqlgrid
 
             Response.Write(jsonString);
 
-            return;
-
             List<Images> myImages = new List<Images>();
 
-            Guid estate_guid1;
-            Guid estate_guid2;
-
-            estate_guid1 = Guid.NewGuid();
-            estate_guid2 = Guid.NewGuid();
-
-//            string myjsonString = "[{\"myindex\":\"345\",\"imagepath\":\"h.jpg\",\"myguid\":" + \" + estate_guid1.ToString() + "\"},\" + \"{\"myindex\":\"546\",\"imagepath\":\"helenedited.jpg\",\"myguid\":" + estate_guid2.ToString() + "}]";
-
-            string myjsonString = "[{\"myindex\":\"345\",\"imagepath\":\"h.jpg\",\"myguid\": estate_guid1.tostring()}," +
-                "{\"myindex\":\"546\",\"imagepath\":\"helenedited.jpg\",\"myguid\":estate_guid2.tostring()}]";
-
             JavaScriptSerializer myjavaScriptSerializer = new JavaScriptSerializer();
-            myImages = (List<Images>)myjavaScriptSerializer.Deserialize(myjsonString, typeof(List<Images>));
+            myImages = (List<Images>)myjavaScriptSerializer.Deserialize(jsonString, typeof(List<Images>));
+
+            Response.Write("<br/><br/>");
+
 
             foreach (Images myimage in myImages)
             {
-                Response.Write("<br /><br/><br/>Primary Key Index = " + myimage.myindex);
+                Response.Write("<br/>Primary Key Index = " + myimage.myindex);
                 Response.Write("<br />Path To Image File = " + myimage.imagepath);
-                Response.Write("<br />Image Guid = " + myimage.myguid + "<br/><br/><br/><br/><br/>");
+                Response.Write("<br />Image Guid = " + myimage.myguid + "<br/>");
             }
 
+
+            //Binding gridview from dynamic object   
+            grdJSON2Grid.DataSource = myImages;
+            grdJSON2Grid.DataBind();
+
+//            DataTable dt = new DataTable();
+//            dt.Columns.Add("File");
+//            dt.Columns.Add("Size");
+//            dt.Columns.Add("Type");
+
+
+            //Using DataTable with JsonConvert.DeserializeObject, here you need to import using System.Data;
+            // dt = (List<Images>)myjavaScriptSerializer.Deserialize(jsonString, typeof(List<Images>));
+            dynamic myObject = myjavaScriptSerializer.Deserialize(jsonString, typeof(List<Images>));
+
+            //Binding gridview from dynamic object   
+            grdJSON3Grid.DataSource = myObject;
+            grdJSON3Grid.DataBind();
+
+            string rtn = "spoutrecords";
+
+            string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            MySqlCommand cmd = new MySqlCommand(rtn, conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            conn.Open();
+
+            //  int liststr = 0;
+            //string displayitem = "";
+
+            int myrecordseffected = 0;
+
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            myrecordseffected = rdr.RecordsAffected;
+
+            grdJSON4Grid.DataSource = rdr;
+            grdJSON4Grid.DataBind();
+
+            conn.Close();
+            conn.Dispose();
+            cmd.Dispose();
+
         }
-        
+
         protected void Button1_Click(object sender, EventArgs e)
         {
 
