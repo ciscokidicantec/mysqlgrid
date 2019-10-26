@@ -9,6 +9,9 @@ using MySql.Data;
 using System.Configuration;
 using System.Data;
 using System.IO;
+using System.Net;
+using System.Drawing;
+
 
 
 namespace mysqlgrid
@@ -26,6 +29,68 @@ namespace mysqlgrid
             //Create A Connection using Web Config
 
             //  connectionString
+
+            String[] arrayurlimage = new String[4];
+
+            arrayurlimage[0] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+            arrayurlimage[1] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
+            arrayurlimage[2] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
+            arrayurlimage[3] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+            //   arrayurlimage[4] = "https://www.rightmove.co.uk/property-for-sale/fullscreen/image-gallery.html?propertyId=64668300&photoIndex=4#";
+
+            string fileName = "";
+            WebClient client;
+            Stream stream;
+            Bitmap bitmap;
+
+            int fileindex = 0;
+            Guid fileguid;
+            string current_post_code;
+
+            //Cycle around post codes for each estate agents web site
+            try
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
+                MySqlConnection conn = new MySqlConnection(connStr);
+
+                MySqlConnection myConn = new MySqlConnection(connStr);
+                myConn.ConnectionString = connStr;
+                MySqlCommand SelectCommand = new MySqlCommand();
+                string mySQL = "SELECT * FROM estateporrtal.postcodes";
+                SelectCommand.CommandText = mySQL;
+                //                SelectCommand.Parameters.AddWithValue("@myname", myname);
+                SelectCommand.Connection = myConn;
+                MySqlDataReader myReader;
+                myConn.Open();
+                myReader = SelectCommand.ExecuteReader();
+                while (myReader.Read())
+                {
+                    current_post_code = (string)(myReader["postcode"]);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Response.Write("Error Message = " + ex.Message);
+            }
+
+            foreach (string imageUrl in arrayurlimage)
+            {
+                fileindex += 1;
+                fileguid = Guid.NewGuid();
+                fileName = "C:\\Compress\\" + fileguid.ToString() + ".jpg";
+                client = new WebClient();
+                stream = client.OpenRead(imageUrl);
+                bitmap = new Bitmap(stream);
+
+                if (bitmap != null)
+                {
+                    bitmap.Save(fileName);
+                    bitmap.Dispose();
+                }
+            }
+
+
 
         }
 
@@ -50,7 +115,7 @@ namespace mysqlgrid
                 MySqlDataReader myReader;
                 myConn.Open();
                 myReader = SelectCommand.ExecuteReader();
- //               string strfile = "Some info";
+                string strfile = "Some info";
                 while (myReader.Read())
                 {
                     byte[] imgg = (byte[])(myReader["image"]);
@@ -59,7 +124,8 @@ namespace mysqlgrid
                     else
                     {
                         ImageButton imageButton = new ImageButton();
- //                       FileInfo fi = new FileInfo(strfile);
+                        FileInfo fi = new FileInfo(strfile);
+                     //   imageButton.AlternateText = "mario";
                         imageButton.Height = Unit.Pixel(450);
                         imageButton.Style.Add("padding", "5px");
                         //imageButton.Width = Unit.Pixel(100);
