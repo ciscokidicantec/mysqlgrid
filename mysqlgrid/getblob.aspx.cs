@@ -26,6 +26,8 @@ namespace mysqlgrid
             MySqlCommand mycmd = new MySqlCommand(rtn, conn);
             mycmd.CommandType = System.Data.CommandType.StoredProcedure;
 
+            conn.Open();
+
             MySqlDataReader rdr = mycmd.ExecuteReader();
 
 
@@ -43,6 +45,11 @@ namespace mysqlgrid
         }
 
         protected void Button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

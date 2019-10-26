@@ -187,7 +187,7 @@ namespace mysqlgrid
                 while (rdr.Read())
                 {
                     myidx += 1;
-                    getbackindex = rdr.GetInt32("imageindex");
+                    getbackindex = rdr.GetInt32("index");
                     if (getbackindex == 601)
                     {
                         message = "Found 601";

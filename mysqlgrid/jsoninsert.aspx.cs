@@ -119,13 +119,25 @@ namespace mysqlgrid
             grdJSON3Grid.DataSource = myObject;
             grdJSON3Grid.DataBind();
 
-            string rtn = "spoutrecords";
+            //string rtn = "spoutrecords";
+            string rtn = "SPloadimagewithjson";
 
             string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
             MySqlConnection conn = new MySqlConnection(connStr);
 
             MySqlCommand cmd = new MySqlCommand(rtn, conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@myindex", 601);
+            cmd.Parameters.AddWithValue("@myimagefullfileinput", jsonString);
+            cmd.Parameters.AddWithValue("@myguid", 23);
+            cmd.Parameters["@myguid"].Direction = System.Data.ParameterDirection.InputOutput;
+
+            //cmd.Parameters.Add("idx", MySqlDbType.Int32).Value = 666;
+            //cmd.Parameters["@idx"].Direction = System.Data.ParameterDirection.InputOutput;
+            //   cmd.Parameters.AddWithValue("seeindex", getbackindex);
+
+
             conn.Open();
 
             //  int liststr = 0;
@@ -133,7 +145,7 @@ namespace mysqlgrid
 
             int myrecordseffected = 0;
 
-            return;
+            //return;
 
             MySqlDataReader rdr = cmd.ExecuteReader();
             myrecordseffected = rdr.RecordsAffected;
@@ -143,10 +155,9 @@ namespace mysqlgrid
 
             conn.Close();
             conn.Dispose();
-
-        
+            cmd.Dispose();
+     
     }
-
         protected void Button1_Click(object sender, EventArgs e)
         {
 

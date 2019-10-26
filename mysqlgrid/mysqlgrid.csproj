@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\octicons.svg" />
+    <Content Include="downloadandsavezooplaimages.aspx" />
     <Content Include="downloadimage.aspx" />
     <Content Include="getblob.aspx" />
     <Content Include="jsoninsert.aspx" />
@@ -85,6 +86,13 @@
     <Content Include="WebForm2.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="downloadandsavezooplaimages.aspx.cs">
+      <DependentUpon>downloadandsavezooplaimages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="downloadandsavezooplaimages.aspx.designer.cs">
+      <DependentUpon>downloadandsavezooplaimages.aspx</DependentUpon>
+    </Compile>
     <Compile Include="downloadimage.aspx.cs">
       <DependentUpon>downloadimage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
