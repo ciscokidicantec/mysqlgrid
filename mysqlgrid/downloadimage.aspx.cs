@@ -199,23 +199,23 @@ namespace mysqlgrid
                     int myrecordseffected = 0;
                     //Connecting to MySQL.
                     cmd = new MySqlCommand(rtn, myConn);
- //                   cmd = new MySqlCommand(CmdString, myConn);
- 
+                    //                   cmd = new MySqlCommand(CmdString, myConn);
+
                     cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
                     cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
                     cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
- //                   cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
- //                   cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
- //                   cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
- //                   cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
+                    //                   cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
+                    //                   cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
+                    //                   cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
+                    //                   cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
 
                     cmd.Parameters["@imageindex"].Value = fileindex;
                     cmd.Parameters["@image"].Value = imagebytes;
                     cmd.Parameters["@myguid"].Value = myguid;
-//                    cmd.Parameters["@originalfilename"].Value = imageUrl;
-//                    cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
-//                    cmd.Parameters["@savedondiskfilename"].Value = fileName;
-//                    cmd.Parameters["@inserteddate"].Value = DateTime.Now; ;
+                    //                    cmd.Parameters["@originalfilename"].Value = imageUrl;
+                    //                    cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
+                    //                    cmd.Parameters["@savedondiskfilename"].Value = fileName;
+                    //                    cmd.Parameters["@inserteddate"].Value = DateTime.Now; ;
 
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     conn.Open();
@@ -232,27 +232,27 @@ namespace mysqlgrid
                     //return;
 
 
- //                   string CmdString = "INSERT INTO estateporrtal.images(" +
- //                   "imageindex," +
- //                   "image," +
- //                   "myguid," +
- //                   "originalfilename," +
- //                   "imagesizeKbytes," +
- //                   "savedondiskfilename," +
- //                   "inserteddate) " +
- //                   "VALUES(" +
- //                   "@imageindex," +
- //                   "@image," +
-//                    "@myguid," +
-//                    "@originalfilename," +
-//                    "@imagesizeKbytes," +
-//                    "@savedondiskfilename," +
-//                    "@inserteddate)";
+                    //                   string CmdString = "INSERT INTO estateporrtal.images(" +
+                    //                   "imageindex," +
+                    //                   "image," +
+                    //                   "myguid," +
+                    //                   "originalfilename," +
+                    //                   "imagesizeKbytes," +
+                    //                   "savedondiskfilename," +
+                    //                   "inserteddate) " +
+                    //                   "VALUES(" +
+                    //                   "@imageindex," +
+                    //                   "@image," +
+                    //                    "@myguid," +
+                    //                    "@originalfilename," +
+                    //                    "@imagesizeKbytes," +
+                    //                    "@savedondiskfilename," +
+                    //                    "@inserteddate)";
 
 
- //                   int RowsAffected = cmd.ExecuteNonQuery();
+                    //                   int RowsAffected = cmd.ExecuteNonQuery();
                     cmd.Dispose();
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -264,7 +264,72 @@ namespace mysqlgrid
             }
 
         }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            //spinsertwithblobwithinjson this is the stored procedure for multiple image inserts using json
+            //jsonlongblob class defines the List structure getting ready to serialise the json structure.
+
+            String[] arrayurlimage = new String[4];
+
+            arrayurlimage[0] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+            arrayurlimage[1] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
+            arrayurlimage[2] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+            arrayurlimage[3] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
+
+            string fileName = "";
+            WebClient client;
+            Stream streamdata;
+            Bitmap bitmap;
+
+            int fileindex = 0;
+
+            string connStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            MySqlConnection myConn = new MySqlConnection(connStr);
+            myConn.ConnectionString = connStr;
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            Guid myguid;
+            myConn.Open();
+
+            fileindex = 10174;
+
+
+            foreach (string imageUrl in arrayurlimage)
+            { 
+                fileindex += 1;
+                client = new WebClient();
+
+                if (CheckBox1.Checked)
+                {
+                    fileName = "C:\\Compress\\" + "downloaded " + fileindex.ToString() + ".jpg";
+                    streamdata = client.OpenRead(imageUrl);
+                    bitmap = new Bitmap(streamdata);
+                    bitmap.Save(fileName);
+                    bitmap.Dispose();
+                }
+
+                List<jsonlongblob> listblobjsonimages = new List<jsonlongblob>();
+                //Images[] images = new Images[array2.Length];
+                //String[] arrayurlimage = new String[4];
+                for (int i = 0; i < arrayurlimage.Length; i++)
+                {
+                    //Images[] images = new Images[array2.Length];
+                    byte[] imagebytes = client.DownloadData(imageUrl);
+                    int filesizeKbytes = imagebytes.Length;
+                    myguid = Guid.NewGuid();
+                }
+                listblobjsonimages.myindex = fileindex.ToString;
+                listblobjsonimages.imagelongblob = imagebytes;
+                listblobjsonimages.myguid = myguid;
+
+                listblobjsonimages.Add(listblobjsonimages);
+
+            }
+        }
+
     }
-
-
 }

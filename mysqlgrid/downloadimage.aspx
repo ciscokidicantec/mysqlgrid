@@ -20,6 +20,7 @@
             <br />
             <br />
             <br />
+            <asp:Button ID="Button3" runat="server" OnClick="Button3_Click" Text="Insert Multiple Images Using Stored Procedure" />
             <br />
             <br />
             <br />
