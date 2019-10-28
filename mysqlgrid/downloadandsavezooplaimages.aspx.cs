@@ -12,8 +12,6 @@ using System.IO;
 using System.Net;
 using System.Drawing;
 
-
-
 namespace mysqlgrid
 {
     public partial class downloadandsavezooplaimages : System.Web.UI.Page
@@ -30,13 +28,22 @@ namespace mysqlgrid
 
             //  connectionString
 
+            string[] estateagentwebsite = new string[5];
+            estateagentwebsite[0] = "Https://www.zoopla.co.uk";
+            estateagentwebsite[1] = "Https://www.purplebricks.co.uk";
+
+
+
             String[] arrayurlimage = new String[4];
 
             arrayurlimage[0] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
             arrayurlimage[1] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
             arrayurlimage[2] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
             arrayurlimage[3] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
-            //   arrayurlimage[4] = "https://www.rightmove.co.uk/property-for-sale/fullscreen/image-gallery.html?propertyId=64668300&photoIndex=4#";
+        //  arrayurlimage[4] = "https://www.rightmove.co.uk/property-for-sale/fullscreen/image-gallery.html?propertyId=64668300&photoIndex=4#";
+        //  pn=8 is the page number /ab/ is the post code radius=0 search source=home
+        //  https://www.zoopla.co.uk/for-sale/property/ab/?q=ab&search_source=home&radius=0&pn=8
+
 
             string fileName = "";
             WebClient client;
@@ -66,6 +73,10 @@ namespace mysqlgrid
                 while (myReader.Read())
                 {
                     current_post_code = (string)(myReader["postcode"]);
+                    //start scraping the web site for the images for that post code
+
+
+
                 }
 
             }
@@ -73,6 +84,12 @@ namespace mysqlgrid
             {
                 Response.Write("Error Message = " + ex.Message);
             }
+
+//            while (reader.read())
+//            {
+//                var image = (byte[])reader.getColumn(0);
+//                File.WriteAllBytes(@"c:\image.extension", image);
+//            }
 
             foreach (string imageUrl in arrayurlimage)
             {
