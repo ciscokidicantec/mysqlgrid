@@ -12,6 +12,11 @@
     <form id="form1" runat="server">
         <div>
             <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Download Image From Internet" Width="254px" />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <asp:CheckBox ID="CheckBox1" runat="server" Text="Save The File To Disk As Well" />
+            <br />
+            <br />
+            <asp:Button ID="Button2" runat="server" OnClick="Button2_Click" Text="Insert Single Image Using SP BLOB" />
             <br />
             <br />
             <br />
