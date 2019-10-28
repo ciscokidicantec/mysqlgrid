@@ -68,7 +68,7 @@ namespace mysqlgrid
 
             Guid myguid;
             myConn.Open();
-            fileindex = 10010;
+            fileindex = 10064;
 
             foreach (string imageUrl in arrayurlimage)
             {
@@ -79,77 +79,30 @@ namespace mysqlgrid
                 bitmap = new Bitmap(streamdata);
 
                 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                BinaryReader br = new BinaryReader(streamdata);
-                byte[] bytes = br.ReadBytes((Int32)streamdata.Length);
+                byte[] imagebytes = client.DownloadData(imageUrl);
+                byte[] imagecontent = new byte[imagebytes.Length];
 
-
-                    fsObj = client.OpenRead(imageUrl);
-                //                fsObj = File.OpenRead(imageUrl);
-                byte[] imgContent = new byte[fsObj.Length];
-                binRdr = new BinaryReader(fsObj);
-                imgContent = binRdr.ReadBytes((int)fsObj.Length);
-            //    mcon = new MySqlConnection("server=localhost;user=root;pwd=root;database=test;");
-            //    mcon.Open();
-
-                //inserting into MySQL db
-      //          cmd = new MySqlCommand("insert into users  (userid,username,userphoto) values (@userid, @username,  @userphoto)", mcon);
-      //          cmd.Parameters.Add(new MySqlParameter("@userid", (object)textBox1.Text));
-      //          cmd.Parameters.Add(new MySqlParameter("@username", (object)textBox2.Text));
-      //          cmd.Parameters.Add(new MySqlParameter("@userphoto", (object)imgContent));
-      //          MessageBox.Show(cmd.ExecuteNonQuery().ToString() + " rows  affected");
-
-
-
-
-
-                //               var outimagre = System.Drawing.Image.FromStream(stream);
+                var memoryStream = new MemoryStream(imagebytes);
+                bitmap = new Bitmap(memoryStream);
 
                 myguid = Guid.NewGuid();
-
-
-//                string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`, `myguid`) VALUES (" + fileindex + "," + streamdata + ",'" + myguid + "');";
-                string query = "INSERT INTO estateporrtal.images (`imageindex`,`image`, `myguid`) VALUES (" + fileindex + ",'" + imgContent + "','" + myguid + "');";
 
                 try
                 {
 
-//                   System.IO.FileStream fs = new FileStream(@"D:\link\to\image.png", FileMode.Open);
-//                   System.IO.BufferedStream bf = new BufferedStream(fs);
-//                    byte[] buffer = new byte[bf.Length];
-//                    bf.Read(buffer, 0, buffer.Length);
-
-//                    byte[] buffer_new = buffer;
-
-//                    MySqlConnection connection = new MySqlConnection(MyConString);
-//                    connection.Open();
-//                    MySqlCommand command = new MySqlCommand("", connection);
-//                    command.CommandText = "insert into table(fldImage) values(@image);";
-//                    command.Parameters.AddWithValue("@image", buffer_new);
-//                    command.ExecuteNonQuery();
-//                    connection.Close();
-
-                    //                    cmd = new MySqlCommand(query, myConn);
-                    cmd = new MySqlCommand(query, myConn);
-                    //                  cmd.CommandText = "INSERT INTO estateporrtal.images (`imageindex`,`image`, `myguid`) VALUES (" + fileindex + "," + streamdata + ",'" + myguid + "');";
-
-
-                    //                   System.IO.FileStream fs = new FileStream(@"D:\link\to\image.png", FileMode.Open);
-                    //                   System.IO.BufferedStream bf = new BufferedStream(fs);
-
-                    //       System.IO.BufferedStream bf = new BufferedStream(streamdata);
-                    //       byte[] buffer = new byte[streamdata.Length];
-                    //       streamdata.Read(buffer, 0, buffer.Length);
-                    //       byte[] buffer_new = buffer;
-                    //                    cmd.Parameters.AddWithValue("@image", streamdata);
-                    cmd.Parameters.Add(new MySqlParameter("@image", (object)imgContent));
-                    cmd.Parameters.Add("imageindex", MySqlDbType.Int32).Value = fileindex;
-                 //   cmd.Parameters.Add("image", MySqlDbType.LongBlob).Value = streamdata;
-                 //   cmd.Parameters.Add("image", MySqlDbType.LongBlob).Value = "abc";
-                 //   cmd.Parameters.Add("myguid", MySqlDbType.Guid).Value = myguid;
                     cmd.Connection = myConn;
 
+                    string CmdString = "INSERT INTO estateporrtal.images(imageindex, image, myguid) VALUES(@imageindex, @image, @myguid)";
+                    cmd = new MySqlCommand(CmdString, myConn);
+                    cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
+                    cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
+                    cmd.Parameters["@imageindex"].Value = fileindex;
+                    cmd.Parameters["@image"].Value = imagebytes;
+                    cmd.Parameters["@myguid"].Value = myguid;
+                //    con.Open();
+                    int RowsAffected = cmd.ExecuteNonQuery();
                     //cmd.Dispose();
-                    cmd.ExecuteNonQuery();
                 }
                 catch(Exception ex)
                 {
