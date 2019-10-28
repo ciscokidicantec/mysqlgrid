@@ -141,10 +141,10 @@ namespace mysqlgrid
         {
             String[] arrayurlimage = new String[4];
 
-            arrayurlimage[0] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
-            arrayurlimage[1] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
-            arrayurlimage[2] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
-            arrayurlimage[3] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+            arrayurlimage[0] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+            arrayurlimage[1] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
+            arrayurlimage[2] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+            arrayurlimage[3] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
             //   arrayurlimage[4] = "https://www.rightmove.co.uk/property-for-sale/fullscreen/image-gallery.html?propertyId=64668300&photoIndex=4#";
 
             //   MySqlCommand cmd;
@@ -169,7 +169,7 @@ namespace mysqlgrid
             Guid myguid;
             myConn.Open();
 
-            fileindex = 10074;
+            fileindex = 10174;
 
             foreach (string imageUrl in arrayurlimage)
             {
@@ -194,11 +194,29 @@ namespace mysqlgrid
                 {
 
                     cmd.Connection = myConn;
-                    string rtn = "spoutrecords";
+                    string rtn = "spinsertlblob";
 
                     int myrecordseffected = 0;
                     //Connecting to MySQL.
-                    cmd = new MySqlCommand(rtn, conn);
+                    cmd = new MySqlCommand(rtn, myConn);
+ //                   cmd = new MySqlCommand(CmdString, myConn);
+ 
+                    cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
+                    cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
+ //                   cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
+ //                   cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
+ //                   cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
+ //                   cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
+
+                    cmd.Parameters["@imageindex"].Value = fileindex;
+                    cmd.Parameters["@image"].Value = imagebytes;
+                    cmd.Parameters["@myguid"].Value = myguid;
+//                    cmd.Parameters["@originalfilename"].Value = imageUrl;
+//                    cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
+//                    cmd.Parameters["@savedondiskfilename"].Value = fileName;
+//                    cmd.Parameters["@inserteddate"].Value = DateTime.Now; ;
+
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     conn.Open();
 
@@ -211,46 +229,30 @@ namespace mysqlgrid
                     //                        GridView1.DataSource = rdr;
                     //                        GridView1.DataBind();
 
-                    return;
+                    //return;
 
 
-                    string CmdString = "INSERT INTO estateporrtal.images(" +
-                    "imageindex," +
-                    "image," +
-                    "myguid," +
-                    "originalfilename," +
-                    "imagesizeKbytes," +
-                    "savedondiskfilename," +
-                    "inserteddate) " +
-                    "VALUES(" +
-                    "@imageindex," +
-                    "@image," +
-                    "@myguid," +
-                    "@originalfilename," +
-                    "@imagesizeKbytes," +
-                    "@savedondiskfilename," +
-                    "@inserteddate)";
-
-                    cmd = new MySqlCommand(CmdString, myConn);
-                    cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
-                    cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
-                    cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
-                    cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
-                    cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
-                    cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
-                    cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
-
-                    cmd.Parameters["@imageindex"].Value = fileindex;
-                    cmd.Parameters["@image"].Value = imagebytes;
-                    cmd.Parameters["@myguid"].Value = myguid;
-                    cmd.Parameters["@originalfilename"].Value = imageUrl;
-                    cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
-                    cmd.Parameters["@savedondiskfilename"].Value = fileName;
-                    cmd.Parameters["@inserteddate"].Value = DateTime.Now; ;
+ //                   string CmdString = "INSERT INTO estateporrtal.images(" +
+ //                   "imageindex," +
+ //                   "image," +
+ //                   "myguid," +
+ //                   "originalfilename," +
+ //                   "imagesizeKbytes," +
+ //                   "savedondiskfilename," +
+ //                   "inserteddate) " +
+ //                   "VALUES(" +
+ //                   "@imageindex," +
+ //                   "@image," +
+//                    "@myguid," +
+//                    "@originalfilename," +
+//                    "@imagesizeKbytes," +
+//                    "@savedondiskfilename," +
+//                    "@inserteddate)";
 
 
-                    int RowsAffected = cmd.ExecuteNonQuery();
+ //                   int RowsAffected = cmd.ExecuteNonQuery();
                     cmd.Dispose();
+                    
                 }
                 catch (Exception ex)
                 {
