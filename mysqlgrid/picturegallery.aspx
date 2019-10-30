@@ -24,7 +24,7 @@
             <br />
             <br />
             <br />
-                        <asp:GridView ID="GridView1" runat="server" Height="321px" Width="1138px">
+            <asp:GridView ID="GridView1" runat="server" Height="321px" Width="1138px">
                 <Columns>
                     <asp:TemplateField>
                         <EditItemTemplate>

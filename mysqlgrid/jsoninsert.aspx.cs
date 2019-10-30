@@ -72,7 +72,6 @@ namespace mysqlgrid
 
             Response.Write("<br/><br/>");
 
-
             foreach (Images myimage in myImages)
             {
                 Response.Write("<br/>Primary Key Index = " + myimage.myindex);
@@ -85,7 +84,7 @@ namespace mysqlgrid
             grdJSON2Grid.DataSource = myImages;
             grdJSON2Grid.DataBind();
 
-            DataTable dt = new DataTable();
+//            DataTable dt = new DataTable();
             //            dt.Columns.Add("File");
             //            dt.Columns.Add("Size");
             //            dt.Columns.Add("Type");

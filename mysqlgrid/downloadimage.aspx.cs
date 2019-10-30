@@ -16,6 +16,10 @@ using System.Configuration;
 //using System.Drawing.Image;
 
 using System.Drawing.Drawing2D;
+using System.Json;
+using System.Web.Script.Serialization;
+
+
 
 
 
@@ -279,6 +283,7 @@ namespace mysqlgrid
 
             string fileName = "";
             WebClient client;
+            WebClient jsonclient;
             Stream streamdata;
             Bitmap bitmap;
 
@@ -290,16 +295,36 @@ namespace mysqlgrid
             MySqlConnection myConn = new MySqlConnection(connStr);
             myConn.ConnectionString = connStr;
 
+            //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+            int myrecordseffected = 0;
             MySqlCommand cmd = new MySqlCommand();
+
+            string rtn = "spinsertwithblobwithinjson";
+
+            //Connecting to MySQL.
+            cmd = new MySqlCommand(rtn, myConn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+//            conn.Open();
+
+            //  int liststr = 0;
+            //string displayitem = "";
+
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            myrecordseffected = rdr.RecordsAffected;
+
+
+
             cmd.Connection = conn;
             Guid myguid;
             myConn.Open();
 
             fileindex = 10174;
 
+            List<jsonlongblob> jsonblob = new List<jsonlongblob>();
 
             foreach (string imageUrl in arrayurlimage)
-            { 
+            {
                 fileindex += 1;
                 client = new WebClient();
 
@@ -311,25 +336,74 @@ namespace mysqlgrid
                     bitmap.Save(fileName);
                     bitmap.Dispose();
                 }
+            }
+ //             jsonlongblob[] creatjson = new jsonlongblob[arrayurlimage.Length];
+                jsonlongblob creatjson = new jsonlongblob();
 
-                List<jsonlongblob> listblobjsonimages = new List<jsonlongblob>();
-                //Images[] images = new Images[array2.Length];
-                //String[] arrayurlimage = new String[4];
+                jsonclient = new WebClient();
+
                 for (int i = 0; i < arrayurlimage.Length; i++)
                 {
-                    //Images[] images = new Images[array2.Length];
-                    byte[] imagebytes = client.DownloadData(imageUrl);
+                    byte[] imagebytes = jsonclient.DownloadData(arrayurlimage[i]);
                     int filesizeKbytes = imagebytes.Length;
                     myguid = Guid.NewGuid();
+
+                    //Add each image with index, guid etc to the list class, To start with we will have 4 image items - later it will be a page load for a
+                    //particular post code. Then we will call the sp again for the next page until all that post code is completed. Then we go onto next post code.
+                    
+                    jsonblob.Add(new jsonlongblob { myindex = i.ToString(), imagelongblob = imagebytes.ToString(), myguid = myguid.ToString()});
+
                 }
-                listblobjsonimages.myindex = fileindex.ToString;
-                listblobjsonimages.imagelongblob = imagebytes;
-                listblobjsonimages.myguid = myguid;
 
-                listblobjsonimages.Add(listblobjsonimages);
+                Response.Write("<br/> jsonblob Count = " + jsonblob.Count + "<br />");
 
-            }
+                foreach (var mycreatjson in jsonblob)
+                {
+                    Response.Write("<br />" + mycreatjson.myindex + "<br />");
+                    Response.Write(mycreatjson.imagelongblob + "<br />");
+                    Response.Write(mycreatjson.myguid + "<br /><br />");
+                }
+
+                //Having now gor the pictures, index, guid etc we now need to make this list of itel into a json structure by serialising the list as below.
+                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                string jsonString;
+
+                javaScriptSerializer = new JavaScriptSerializer();
+                jsonString = javaScriptSerializer.Serialize(jsonblob);
+
+                cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
+                cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
+
+                cmd.Parameters["@imageindex"].Value = fileindex;
+                cmd.Parameters["@image"].Value = jsonString;
+                myguid = Guid.NewGuid();
+
+                cmd.Parameters["@myguid"].Value = myguid.ToString();
+
+            //To check the serialisation we will deserialize the newly created json structure back to a new different list in our class jsonlongblob 
+            //So lets create this new emty list to check and see the json as a list structure again by deserilaizeing as below.
+            List<jsonlongblob> myImages = new List<jsonlongblob>();
+
+                JavaScriptSerializer myjavaScriptSerializer = new JavaScriptSerializer();
+                myImages = (List<jsonlongblob>)myjavaScriptSerializer.Deserialize(jsonString, typeof(List<jsonlongblob>));
+
+                //Its worth noting that although we can create an array of json structures MYSQL currently does not accept arrays. And in any case
+                //I am not sure if there is the capacity of passing that many images across in one go to MYSQL and then the Stored Procedure will have to
+                //then do the database INSERT, if all that effort would be worth while.
+
+                //Now we have a set of list structures. We can print each item of the structure out. Either using a foreach or array structure
+                foreach (var mydeserializeImages in myImages)
+                {
+                    Response.Write("<br/>Primary Key Index = " + mydeserializeImages.myindex);
+                    Response.Write("<br />File BLOB = " + mydeserializeImages.imagelongblob);
+                    Response.Write("<br />Image Guid = " + mydeserializeImages.myguid + "<br/>");
+                }
+
+                // < asp:Image ID = "Image1" runat = "server" ImageUrl = '<%#"data:Image/png;base64," + Convert.ToBase64String((byte[])Eval("imagelongblob"))%>' />
+
+                GridView1.DataSource = myImages;
+                GridView1.DataBind();
         }
-
     }
 }

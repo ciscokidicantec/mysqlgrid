@@ -24,6 +24,17 @@
             <br />
             <br />
             <br />
+            <asp:GridView ID="GridView1" runat="server" Height="449px" Width="870px">
+                <Columns>
+                    <asp:TemplateField>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                        </EditItemTemplate>
+                        <ItemTemplate>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
             <br />
             <br />
             <br />
