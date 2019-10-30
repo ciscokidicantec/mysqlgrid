@@ -305,23 +305,14 @@ namespace mysqlgrid
             //Connecting to MySQL.
             cmd = new MySqlCommand(rtn, myConn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
-//            conn.Open();
 
-            //  int liststr = 0;
-            //string displayitem = "";
-
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            myrecordseffected = rdr.RecordsAffected;
-
-
-
-            cmd.Connection = conn;
             Guid myguid;
             myConn.Open();
 
-            fileindex = 10174;
+            fileindex = 23456;
 
             List<jsonlongblob> jsonblob = new List<jsonlongblob>();
+            List<jsonlongblobarray> jsonblobarray = new List<jsonlongblobarray>();
 
             foreach (string imageUrl in arrayurlimage)
             {
@@ -337,8 +328,8 @@ namespace mysqlgrid
                     bitmap.Dispose();
                 }
             }
- //             jsonlongblob[] creatjson = new jsonlongblob[arrayurlimage.Length];
                 jsonlongblob creatjson = new jsonlongblob();
+                jsonlongblobarray creatjsonarrayimage = new jsonlongblobarray();
 
                 jsonclient = new WebClient();
 
@@ -352,7 +343,7 @@ namespace mysqlgrid
                     //particular post code. Then we will call the sp again for the next page until all that post code is completed. Then we go onto next post code.
                     
                     jsonblob.Add(new jsonlongblob { myindex = i.ToString(), imagelongblob = imagebytes.ToString(), myguid = myguid.ToString()});
-
+                    jsonblobarray.Add(new jsonlongblobarray { Myindex = i.ToString(), Imagelongblob = imagebytes, Myguid = myguid.ToString()});
                 }
 
                 Response.Write("<br/> jsonblob Count = " + jsonblob.Count + "<br />");
@@ -360,26 +351,39 @@ namespace mysqlgrid
                 foreach (var mycreatjson in jsonblob)
                 {
                     Response.Write("<br />" + mycreatjson.myindex + "<br />");
-                    Response.Write(mycreatjson.imagelongblob + "<br />");
+                    for (int i = 0; i < mycreatjson.imagelongblob.Length; i++)
+                    {
+                    Response.Write(mycreatjson.imagelongblob[i]);
+                    }
+//                    Response.Write(mycreatjson.imagelongblob + "<br />");
                     Response.Write(mycreatjson.myguid + "<br /><br />");
                 }
 
-                //Having now gor the pictures, index, guid etc we now need to make this list of itel into a json structure by serialising the list as below.
+                //Having now got pictures, index, guid etc we now need to make this list of itel into a json structure by serialising the list as below.
                 JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                JavaScriptSerializer javaScriptSerializerarrayimage = new JavaScriptSerializer();
+
                 string jsonString;
+                string jsonStringarray;
 
                 javaScriptSerializer = new JavaScriptSerializer();
                 jsonString = javaScriptSerializer.Serialize(jsonblob);
 
-                cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
-                cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
+                javaScriptSerializerarrayimage = new JavaScriptSerializer();
+                jsonStringarray = javaScriptSerializerarrayimage.Serialize(jsonblobarray);
+
+
+            cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                cmd.Parameters.Add("@myjson", MySqlDbType.JSON);
                 cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
 
                 cmd.Parameters["@imageindex"].Value = fileindex;
-                cmd.Parameters["@image"].Value = jsonString;
+                cmd.Parameters["@myjson"].Value = jsonString;
                 myguid = Guid.NewGuid();
-
                 cmd.Parameters["@myguid"].Value = myguid.ToString();
+
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                myrecordseffected = rdr.RecordsAffected;
 
             //To check the serialisation we will deserialize the newly created json structure back to a new different list in our class jsonlongblob 
             //So lets create this new emty list to check and see the json as a list structure again by deserilaizeing as below.
@@ -400,10 +404,15 @@ namespace mysqlgrid
                     Response.Write("<br />Image Guid = " + mydeserializeImages.myguid + "<br/>");
                 }
 
-                // < asp:Image ID = "Image1" runat = "server" ImageUrl = '<%#"data:Image/png;base64," + Convert.ToBase64String((byte[])Eval("imagelongblob"))%>' />
+            // < asp:Image ID = "Image1" runat = "server" ImageUrl = '<%#"data:Image/png;base64," + Convert.ToBase64String((byte[])Eval("imagelongblob"))%>' />
 
-                GridView1.DataSource = myImages;
-                GridView1.DataBind();
+                cmd.Dispose();
+                myConn.Close();
+                myConn.Dispose();
+
+
+               // GridView1.DataSource = myImages;
+               // GridView1.DataBind();
         }
     }
 }

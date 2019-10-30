@@ -116,6 +116,7 @@
       <DependentUpon>jsoninsert.aspx</DependentUpon>
     </Compile>
     <Compile Include="jsonlongblob.cs" />
+    <Compile Include="jsonlongblobarray.cs" />
     <Compile Include="mygridview.aspx.cs">
       <DependentUpon>mygridview.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
