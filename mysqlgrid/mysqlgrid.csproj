@@ -131,6 +131,7 @@
     <Compile Include="picturegallery.aspx.designer.cs">
       <DependentUpon>picturegallery.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Postcode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebForm2.aspx.cs">
       <DependentUpon>WebForm2.aspx</DependentUpon>

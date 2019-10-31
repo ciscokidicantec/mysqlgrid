@@ -7,9 +7,9 @@ namespace mysqlgrid
 {
     public class jsonlongblobarray
     {
-        public string Myindex { get; set; }
+        public Guid Myindex { get; set; }
         public byte[] Imagelongblob { get; set; }
-        public string Myguid { get; set; }
+        public Guid Myguid { get; set; }
 
     }
 }
