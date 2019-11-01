@@ -275,11 +275,7 @@ namespace mysqlgrid
             //Then we will iterate through the post codes one at a time to get the photos. So lets start by creating a Class List and saving the post code in there.
 
             List<Postcode> postcodelist = new List<Postcode>();
-
-
-
-            //    postcodelist.add(new { postcodeindex, postcode, nameofplace };
-
+            Postcode postcodeinstance = new Postcode();
 
 
             try
@@ -293,12 +289,11 @@ namespace mysqlgrid
                 mypostcodecmd.CommandType = System.Data.CommandType.Text;
 
                 connpostcode.Open();
-                string areapostcode;
+              //  string areapostcode;
                 MySqlDataReader rdrpostcode = mypostcodecmd.ExecuteReader();
                 while (rdrpostcode.Read())
                 {
-                    areapostcode = (string)rdrpostcode["postcode"];
-
+                  postcodelist.Add(new Postcode { postcodeindex = (int)rdrpostcode["indexpostcode"], postcode = (string)rdrpostcode["postcode"], nameofplace = (string)rdrpostcode["codeareadescription"] });
                 }
 
                 connpostcode.Close();
@@ -347,8 +342,9 @@ namespace mysqlgrid
             Guid myguid;
             Guid myguidindex;
 
-            //            List<jsonlongblob> jsonblob = new List<jsonlongblob>();
             List<jsonlongblobarray> jsonblobarray = new List<jsonlongblobarray>();
+
+            //Get the first post code from the list, and cycle round getting the images.
 
             foreach (string imageUrl in arrayurlimage)
             {
