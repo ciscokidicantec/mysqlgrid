@@ -10,7 +10,7 @@ namespace mysqlgrid
         public Guid Myindex { get; set; }
         public byte[] Imagelongblob { get; set; }
         public Guid Myguid { get; set; }
-        public Guid Mypostalcodeplace { get; set; }
+        public String Mypostalcodeplace { get; set; }
 
     }
 }

@@ -29,7 +29,7 @@ namespace mysqlgrid
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Response.Write("got To Page Load");
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -283,7 +283,8 @@ namespace mysqlgrid
                 string myconnpostcodeStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
                 MySqlConnection connpostcode = new MySqlConnection(myconnpostcodeStr);
 
-                string commandstring = "SELECT * FROM postcodes WHERE TRIM(POSTCODE) = 'BN' OR TRIM(POSTCODE) = 'BD'";
+                string commandstring = "SELECT * FROM postcodes WHERE TRIM(POSTCODE) = 'SN'";
+//                string commandstring = "SELECT * FROM postcodes WHERE TRIM(POSTCODE) = 'BN' OR TRIM(POSTCODE) = 'BD' OR TRIM(POSTCODE) = 'CB'";
 
                 MySqlCommand mypostcodecmd = new MySqlCommand(commandstring, connpostcode);
                 mypostcodecmd.CommandType = System.Data.CommandType.Text;
@@ -306,6 +307,12 @@ namespace mysqlgrid
             }
             //spinsertwithblobwithinjson this is the stored procedure for multiple image inserts using json
             //jsonlongblob class defines the List structure getting ready to serialise the json structure.
+
+            foreach (var testpostname in postcodelist)
+            {
+                Response.Write("<br/>Post Code = " + testpostname.postcode + " Post Code Name Of Place = " + testpostname.nameofplace);
+
+            }
 
             String[] arrayurlimage = new String[4];
 
@@ -380,7 +387,9 @@ namespace mysqlgrid
             int ihits = 0;
             int ihitsendpos = 0;
             int interator = 0;
-            string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sw19/?q=ab&results_sort=newest_listings&search_source=home&radius=0&pn=0";
+
+            //https://www.zoopla.co.uk/for-sale/property/sn/?page_size=1&q=sn&search_source=home&radius=0
+            string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sw19/?page_size=1&q=ab&results_sort=newest_listings&search_source=home&radius=0&pn=0";
             string retString;
 
             //Create an i stance of a class list for the image download paths
@@ -388,12 +397,12 @@ namespace mysqlgrid
             imagedownloadpath postcodeinstancepathdownload = new imagedownloadpath();
 
             string mynewpagenumber = "";
-            int currenturlpagenumber = 1;
+            int currenturlpagenumber = -1;
             int splitpos;
             string retpagenostring;
             int wholeurllength;
             //         string wholeurl;
-            currenturlpagenumber = 4;
+            currenturlpagenumber = 1;
 
             CustomWebClient mywebClient;
 
@@ -403,7 +412,7 @@ namespace mysqlgrid
               //  {
               //      break;
               //  }
-                for (int iq=0;iq<2;iq++)
+                for (int iq=0;iq<=0;iq++)
                 {
                     //amend the page number of the url, pn to increase by 1.
                     //length of whole url string
@@ -428,6 +437,8 @@ namespace mysqlgrid
                     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
                     //htmlpage = currentwebcontent.DownloadString(correctpostcodeurl);
+                    //At this point have a class which overides the HttpRequestHeader - a new instance of CustomWebClient the new class rather than
+                    //WebClient. Otherwise end up with a newtork limitation error.
                     mywebClient = new CustomWebClient();
                     mywebClient.Headers[HttpRequestHeader.Authorization] = "Basic "; //+ base64String;
                     htmlpage = mywebClient.DownloadString(correctpostcodeurl);
@@ -438,25 +449,44 @@ namespace mysqlgrid
                     string endtext = ".jpg";
                     ihits = 0;
                     interator = 0;
+                    int detaildescriptionpathhits = 0;
+                    string detaildescriptionsearch = "<a class=" + '"' + "listing-results-price text-price" + '"' + " href=" + '"' + "//for-sale//details//";
+                    int detailspos = 0;
+                    string returndetails = "";
+
                     while ((ihits = htmlpage.IndexOf(texttosearch, ihits)) != -1)
                     {
                         // Print out the substring.
                         interator++;
                         ihitsendpos = htmlpage.IndexOf(endtext, ihits);
                         retString = htmlpage.Substring(ihits + 5, ihitsendpos - (ihits + 1));
-                        downloadpath.Add(new imagedownloadpath { downloadpath = retString });
-                        Response.Write("<br/>Hit Number = " + interator + " Hit Positions = " + ihits + "     Text Returned = " + retString);
                         // Increment the index.
                         ihits++;
-                    }
 
-                    //int first = htmlpage.IndexOf(texttosearch, ihits);
-                    //int last = htmlpage.LastIndexOf(texttosearch);;p
-                    //string str2 = htmlpage.Substring(first, last - first);
+                        //Start Looking For Description, Price etc
+                        //In this case the property details are on another page pointed to by an Price anchor.
+                        //This looks like, href = "/for-sale/details/53228060?search_identifier=2bed39587b1b7ffa738240d054f6a46a"
+                        detailspos = htmlpage.IndexOf(detaildescriptionsearch, detaildescriptionpathhits);
+                        returndetails = htmlpage.Substring(detailspos, detailspos - (detaildescriptionpathhits + 1));
+                        detaildescriptionpathhits++;
+                        //, price, numberofbedrooms
+                        downloadpath.Add(new imagedownloadpath { downloadpath = retString, detaildescriptionpath = returndetails });
+                        Response.Write("<br/>Hit Number = " + interator + " Hit Positions = " + ihits + "     Text Returned = " + retString);
 
-                  //  currentwebcontent.Dispose();
-                 //   break;
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+    }
+
+    //int first = htmlpage.IndexOf(texttosearch, ihits);
+    //int last = htmlpage.LastIndexOf(texttosearch);;p
+    //string str2 = htmlpage.Substring(first, last - first);
+
+    //  currentwebcontent.Dispose();
+    //   break;
+    Response.Write("<br/>Current Page Number = " + iq);
+
                 }                  //return;
+
 
             }
             //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
@@ -499,7 +529,7 @@ namespace mysqlgrid
                     //particular post code. Then we will call the sp again for the next page until all that post code is completed. Then we go onto next post code.
 
                     //    jsonblob.Add(new jsonlongblob { myindex = i.ToString(), imagelongblob = imagebytes.ToString(), myguid = myguid.ToString() });
-                    jsonblobarray.Add(new jsonlongblobarray { Myindex = myguidindex, Imagelongblob = imagebytes, Myguid = myguid, Mypostalcodeplace = nameofplace });
+                    jsonblobarray.Add(new jsonlongblobarray { Myindex = myguidindex, Imagelongblob = imagebytes, Myguid = myguid, Mypostalcodeplace = pathlistitem.downloadpath });
                 }
             
                 //               Response.Write("<br/> jsonblob Count = " + jsonblob.Count + "<br />");
@@ -552,9 +582,9 @@ namespace mysqlgrid
                     myguid = Guid.NewGuid();
                     cmd.Parameters["@myguid"].Value = myguid;
                     cmd.Parameters["@myjson"].Value = mycreatjsonarrayimage.Imagelongblob;
-                    cmd.Parameters["@postalcodeplace"].Value = mycreatjsonarrayimage.postalcodeplace;
+                    cmd.Parameters["@postalcodeplace"].Value = mycreatjsonarrayimage.Mypostalcodeplace;
 
-                indexguid = Guid.NewGuid();
+                    indexguid = Guid.NewGuid();
                     cmd.Parameters["@imageindex"].Value = indexguid;
                     MySqlDataReader rdr = cmd.ExecuteReader();
                     myrecordseffected = rdr.RecordsAffected;
