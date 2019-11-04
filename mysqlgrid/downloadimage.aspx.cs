@@ -283,7 +283,7 @@ namespace mysqlgrid
                 string myconnpostcodeStr = ConfigurationManager.ConnectionStrings["estateportalConnectionString"].ConnectionString;
                 MySqlConnection connpostcode = new MySqlConnection(myconnpostcodeStr);
 
-                string commandstring = "SELECT * FROM postcodes";
+                string commandstring = "SELECT * FROM postcodes WHERE TRIM(POSTCODE) = 'BN' OR TRIM(POSTCODE) = 'BD'";
 
                 MySqlCommand mypostcodecmd = new MySqlCommand(commandstring, connpostcode);
                 mypostcodecmd.CommandType = System.Data.CommandType.Text;
@@ -293,7 +293,8 @@ namespace mysqlgrid
                 MySqlDataReader rdrpostcode = mypostcodecmd.ExecuteReader();
                 while (rdrpostcode.Read())
                 {
-                  postcodelist.Add(new Postcode { postcodeindex = (int)rdrpostcode["indexpostcode"], postcode = (string)rdrpostcode["postcode"], nameofplace = (string)rdrpostcode["codeareadescription"] });
+                  postcodelist.Add(new Postcode { postcodeindex = (int)rdrpostcode["indexpostcode"],
+                      postcode = (string)rdrpostcode["postcode"], nameofplace = (string)rdrpostcode["codeareadescription"]});
                 }
 
                 connpostcode.Close();
@@ -344,9 +345,125 @@ namespace mysqlgrid
 
             List<jsonlongblobarray> jsonblobarray = new List<jsonlongblobarray>();
 
-            //Get the first post code from the list, and cycle round getting the images.
+        //Get the first post code from the list, and cycle round getting the images.
+               //https://www.zoopla.co.uk/for-sale/property/al/?q=ab&search_source=home&radius=0&pn=2
+              //https://www.zoopla.co.uk/for-sale/property/al/?q=ab&results_sort=newest_listings&search_source=home
+              //https://www.zoopla.co.uk/for-sale/property/sw19/?q=ab&results_sort=newest_listings&search_source=home this is Wimbledon London
+              //Start splitting up the url into the request item, lets start with thewse items
+              // Base URL - https://www.zoopla.co.uk/for-sale/property
+              // Post Code Area /ab/ - e.g. Aberdeen.
+              // Sort Order - results_sort=lowest_price
+              // Page Number;
 
-            foreach (string imageUrl in arrayurlimage)
+            //start searching for pagination syntax - This appears to href with a page number attached using pn=2
+            //for-sale/property/sw19/?identifier=sw19&q=ab&search_source=home&radius=0&pn=2
+            //let use some string extraction techniques
+
+            //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+            /*           string inputString = "one two three four five";
+                       string resultString = string.Join(" ", inputString
+                           .Split(' ')
+                           .Select(x => new String(x.Reverse().ToArray())));
+
+                       Response.Write(resultString);
+           */
+            //Lets start with the first post code and 
+
+            string[] urlparts;
+            string correctpostcodeurl;
+
+            string htmlpage;
+            //byte[] htmlpage;
+
+            WebClient currentwebcontent;
+            int ihits = 0;
+            int ihitsendpos = 0;
+            int interator = 0;
+            string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sw19/?q=ab&results_sort=newest_listings&search_source=home&radius=0&pn=0";
+            string retString;
+
+            //Create an i stance of a class list for the image download paths
+            List<imagedownloadpath> downloadpath = new List<imagedownloadpath>();
+            imagedownloadpath postcodeinstancepathdownload = new imagedownloadpath();
+
+            string mynewpagenumber = "";
+            int currenturlpagenumber = 1;
+            int splitpos;
+            string retpagenostring;
+            int wholeurllength;
+            //         string wholeurl;
+            currenturlpagenumber = 4;
+
+            CustomWebClient mywebClient;
+
+            foreach (var currentpostcode in postcodelist)
+            {
+              //  if (currentpostcode.postcode.Trim() == "AL")
+              //  {
+              //      break;
+              //  }
+                for (int iq=0;iq<2;iq++)
+                {
+                    //amend the page number of the url, pn to increase by 1.
+                    //length of whole url string
+                    //look for 'pn='
+                    wholeurllength = wholeurl.Length;
+                    splitpos = wholeurl.IndexOf("pn=", 0);
+                    retpagenostring = wholeurl.Substring(splitpos + 3, (wholeurllength - splitpos - 3));
+                    currenturlpagenumber = int.Parse(retpagenostring);
+                    mynewpagenumber = (iq + 1).ToString();
+                    //Get to the end of 'pn='
+                    retpagenostring = wholeurl.Substring(0, splitpos + 3);
+                    //Now concatinate in the new page number
+                    retpagenostring = retpagenostring + mynewpagenumber;
+                    urlparts = retpagenostring.Split('/');
+                    urlparts[5] = currentpostcode.postcode.ToLower().Trim();
+                    correctpostcodeurl = String.Join("/", urlparts);
+                    currentwebcontent = new WebClient();
+                    // currentwebcontent.Headers
+                    //             client.DownloadFile("http://yoursite.com/page.html", @"C:\localfile.html");
+                    // Or you can get the file content without saving it
+
+                    //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+                    //htmlpage = currentwebcontent.DownloadString(correctpostcodeurl);
+                    mywebClient = new CustomWebClient();
+                    mywebClient.Headers[HttpRequestHeader.Authorization] = "Basic "; //+ base64String;
+                    htmlpage = mywebClient.DownloadString(correctpostcodeurl);
+                    
+
+
+                    string texttosearch = "src=" + '"' + "https://lid.zoocdn.com";
+                    string endtext = ".jpg";
+                    ihits = 0;
+                    interator = 0;
+                    while ((ihits = htmlpage.IndexOf(texttosearch, ihits)) != -1)
+                    {
+                        // Print out the substring.
+                        interator++;
+                        ihitsendpos = htmlpage.IndexOf(endtext, ihits);
+                        retString = htmlpage.Substring(ihits + 5, ihitsendpos - (ihits + 1));
+                        downloadpath.Add(new imagedownloadpath { downloadpath = retString });
+                        Response.Write("<br/>Hit Number = " + interator + " Hit Positions = " + ihits + "     Text Returned = " + retString);
+                        // Increment the index.
+                        ihits++;
+                    }
+
+                    //int first = htmlpage.IndexOf(texttosearch, ihits);
+                    //int last = htmlpage.LastIndexOf(texttosearch);;p
+                    //string str2 = htmlpage.Substring(first, last - first);
+
+                  //  currentwebcontent.Dispose();
+                 //   break;
+                }                  //return;
+
+            }
+            //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+        //    return;
+
+            foreach (var pathlistitem in downloadpath)
             {
                 fileindex += 1;
                 client = new WebClient();
@@ -354,7 +471,7 @@ namespace mysqlgrid
                 if (CheckBox1.Checked)
                 {
                     fileName = "C:\\Compress\\" + "downloaded " + fileindex.ToString() + ".jpg";
-                    streamdata = client.OpenRead(imageUrl);
+                    streamdata = client.OpenRead(pathlistitem.downloadpath);
                     bitmap = new Bitmap(streamdata);
                     bitmap.Save(fileName);
                     bitmap.Dispose();
@@ -366,10 +483,15 @@ namespace mysqlgrid
 
                 jsonclient = new WebClient();
                 byte[] imagebytes;
+     //           int wholeurllength = 0;
+            //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-                for (int i = 0; i < arrayurlimage.Length; i++)
+                //      urlparts[5] = currentpostcode.postcode.ToLower().Trim();
+                //      correctpostcodeurl = String.Join("/", urlparts);
+
+                foreach (var pathlistitem in downloadpath)
                 {
-                    imagebytes = jsonclient.DownloadData(arrayurlimage[i]);
+                    imagebytes = jsonclient.DownloadData(pathlistitem.downloadpath);
                     int filesizeKbytes = imagebytes.Length;
                     myguid = Guid.NewGuid();
                     myguidindex = Guid.NewGuid();
@@ -377,9 +499,9 @@ namespace mysqlgrid
                     //particular post code. Then we will call the sp again for the next page until all that post code is completed. Then we go onto next post code.
 
                     //    jsonblob.Add(new jsonlongblob { myindex = i.ToString(), imagelongblob = imagebytes.ToString(), myguid = myguid.ToString() });
-                    jsonblobarray.Add(new jsonlongblobarray { Myindex = myguidindex, Imagelongblob = imagebytes, Myguid = myguid});
+                    jsonblobarray.Add(new jsonlongblobarray { Myindex = myguidindex, Imagelongblob = imagebytes, Myguid = myguid, Mypostalcodeplace = nameofplace });
                 }
-
+            
                 //               Response.Write("<br/> jsonblob Count = " + jsonblob.Count + "<br />");
 
 
@@ -420,6 +542,7 @@ namespace mysqlgrid
                 cmd.Parameters.Add("@myjson", MySqlDbType.LongBlob);
                 cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
                 cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar, 36);
+                cmd.Parameters.Add("@postalcodeplace",MySqlDbType.VarChar, 255);
 
 
 
@@ -429,7 +552,9 @@ namespace mysqlgrid
                     myguid = Guid.NewGuid();
                     cmd.Parameters["@myguid"].Value = myguid;
                     cmd.Parameters["@myjson"].Value = mycreatjsonarrayimage.Imagelongblob;
-                    indexguid = Guid.NewGuid();
+                    cmd.Parameters["@postalcodeplace"].Value = mycreatjsonarrayimage.postalcodeplace;
+
+                indexguid = Guid.NewGuid();
                     cmd.Parameters["@imageindex"].Value = indexguid;
                     MySqlDataReader rdr = cmd.ExecuteReader();
                     myrecordseffected = rdr.RecordsAffected;

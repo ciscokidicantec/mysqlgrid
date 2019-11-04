@@ -108,6 +108,7 @@
     <Compile Include="getblob.aspx.designer.cs">
       <DependentUpon>getblob.aspx</DependentUpon>
     </Compile>
+    <Compile Include="imagedownloadpath.cs" />
     <Compile Include="jsoninsert.aspx.cs">
       <DependentUpon>jsoninsert.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -123,6 +124,9 @@
     </Compile>
     <Compile Include="mygridview.aspx.designer.cs">
       <DependentUpon>mygridview.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="overridewebclient.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="picturegallery.aspx.cs">
       <DependentUpon>picturegallery.aspx</DependentUpon>
