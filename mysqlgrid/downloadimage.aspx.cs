@@ -442,15 +442,13 @@ namespace mysqlgrid
                     mywebClient = new CustomWebClient();
                     mywebClient.Headers[HttpRequestHeader.Authorization] = "Basic "; //+ base64String;
                     htmlpage = mywebClient.DownloadString(correctpostcodeurl);
-                    
 
+                    Response.Write("<br/>url used = " + htmlpage + "<br/>");
 
                     string texttosearch = "src=" + '"' + "https://lid.zoocdn.com";
                     string endtext = ".jpg";
                     ihits = 0;
                     interator = 0;
-                    int detaildescriptionpathhits = 0;
-                    string detaildescriptionsearch = "<a class=" + '"' + "listing-results-price text-price" + '"' + " href=" + '"' + "//for-sale//details//";
                     int detailspos = 0;
                     string returndetails = "";
 
@@ -462,28 +460,46 @@ namespace mysqlgrid
                         retString = htmlpage.Substring(ihits + 5, ihitsendpos - (ihits + 1));
                         // Increment the index.
                         ihits++;
-
-                        //Start Looking For Description, Price etc
-                        //In this case the property details are on another page pointed to by an Price anchor.
-                        //This looks like, href = "/for-sale/details/53228060?search_identifier=2bed39587b1b7ffa738240d054f6a46a"
-                        detailspos = htmlpage.IndexOf(detaildescriptionsearch, detaildescriptionpathhits);
-                        returndetails = htmlpage.Substring(detailspos, detailspos - (detaildescriptionpathhits + 1));
-                        detaildescriptionpathhits++;
-                        //, price, numberofbedrooms
                         downloadpath.Add(new imagedownloadpath { downloadpath = retString, detaildescriptionpath = returndetails });
                         Response.Write("<br/>Hit Number = " + interator + " Hit Positions = " + ihits + "     Text Returned = " + retString);
+                    }
 
+
+                    //Start Looking For Description, Price etc
+                    //In this case the property details are on another page pointed to by an Price anchor.
+                    //This looks like, href = "/for-sale/details/53228060?search_identifier=2bed39587b1b7ffa738240d054f6a46a" also &pound;
+                    //<a href="/for-sale/details/
+
+                    ihits = 0;
+                    //string detaildescriptionsearch = "<a class=" + '"' + "listing-results-price text-price" + '"' + " href=" + '"' + "//for-sale//details//";
+                    string detaildescriptionsearch = "        &pound;";
+                    string endstringtext = ((char)10).ToString();
+
+                    int myiter = 0;
+
+                    while ((detailspos = htmlpage.IndexOf(detaildescriptionsearch, detailspos)) != -1)
+                    {
+                        detailspos = htmlpage.IndexOf(detaildescriptionsearch, detailspos);
+                        ihitsendpos = htmlpage.IndexOf(endstringtext, detailspos);
+                        returndetails = htmlpage.Substring(detailspos + detaildescriptionsearch.Length, ihitsendpos -(detailspos + detaildescriptionsearch.Length));
+                        detailspos++;
+                        myiter++;
+                        //, price, numberofbedrooms
+                        //     downloadpath.Add(new imagedownloadpath { downloadpath = returndetails, detaildescriptionpath = returndetails });
+
+                        Response.Write("<br/>Hit Number = " + myiter + " Hit Positions = " + detailspos + "     Text Returned = " + returndetails);
+                    }
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
-    }
+                    
 
-    //int first = htmlpage.IndexOf(texttosearch, ihits);
-    //int last = htmlpage.LastIndexOf(texttosearch);;p
-    //string str2 = htmlpage.Substring(first, last - first);
+                        //int first = htmlpage.IndexOf(texttosearch, ihits);
+                        //int last = htmlpage.LastIndexOf(texttosearch);;p
+                        //string str2 = htmlpage.Substring(first, last - first);
 
-    //  currentwebcontent.Dispose();
-    //   break;
-    Response.Write("<br/>Current Page Number = " + iq);
+                        //  currentwebcontent.Dispose();
+                        //   break;
+                        Response.Write("<br/>Current Page Number = " + iq);
 
                 }                  //return;
 
