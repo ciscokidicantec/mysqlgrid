@@ -79,6 +79,7 @@
     <Content Include="downloadandsavezooplaimages.aspx" />
     <Content Include="downloadimage.aspx" />
     <Content Include="getblob.aspx" />
+    <Content Include="getdetails.aspx" />
     <Content Include="jsoninsert.aspx" />
     <Content Include="mygridview.aspx" />
     <Content Include="picturegallery.aspx" />
@@ -100,6 +101,15 @@
     <Compile Include="downloadimage.aspx.designer.cs">
       <DependentUpon>downloadimage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="getdetails.aspx.cs">
+      <DependentUpon>getdetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="getdetails.aspx.designer.cs">
+      <DependentUpon>getdetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="getpropref.cs" />
+    <Compile Include="Getwebparts.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="getblob.aspx.cs">
       <DependentUpon>getblob.aspx</DependentUpon>
@@ -136,6 +146,7 @@
       <DependentUpon>picturegallery.aspx</DependentUpon>
     </Compile>
     <Compile Include="Postcode.cs" />
+    <Compile Include="Postcodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebForm2.aspx.cs">
       <DependentUpon>WebForm2.aspx</DependentUpon>
