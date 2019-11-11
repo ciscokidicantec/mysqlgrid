@@ -58,11 +58,37 @@ namespace mysqlgrid
 
             Getwebparts getpathref = new Getwebparts();
             List<getpropref> allreference = getpathref.Getpropertyreferences(htmlpage, "<a href=" + '"' + "/for-sale/details/", '"' + " ");
+            //List<getpropref> allreference = getpathref.Getpropertyreferences(htmlpage, "&pound;"," ");
+            //List<getpropref> allreference = getpathref.Getpropertyreferences(htmlpage, "<a href=" + '"' + "/for-sale/details/", "?");
 
-            foreach (var mytotref in allreference)
+            Getwebparts getpathrefregex = new Getwebparts();
+//            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d[?]");
+            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d?");
+
+            int mycounter = 0;
+            string buildancor = "";
+
+            foreach (var mytotrefregex in patermatchpropertyreference)
             {
-                Response.Write("<br/>Path To Detail Descriptions = " + mytotref.propertyreference + "<br/>");
+                //Response.Write("<br/>Path To Detail Descriptions  Using REGEX = " + mytotrefregex.propertyreference.ToString() + " Value from zero based start = " + mytotrefregex.matchindex.ToString()  + "<br/>");
+                //Response.Write("<br/><br/>");
+                //<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>
+
+                //buildancor = "<br/>" + mytotrefregex.propertyreference.ToString() + '"' + "https://ciscokidicantec.mario.wakeham.name/" + '"' + ">My Google Web Site " + mytotrefregex.matchindex.ToString() + "<a/>" + "<br/>";
+                //buildancor = "<br/>" + mytotrefregex.propertyreference.ToString() + '"' + "https://ciscokidicantec.mario.wakeham.name/" + '"' + ">My Google Web Site " + mytotrefregex.matchindex.ToString() + "<a/>" + "<br/>";
+
+                buildancor = "<br/>" + mytotrefregex.propertyreference.ToString();
+
+                Response.Write(buildancor);
+                mycounter++;
             }
+
+             
+
+      //      foreach (var mytotref in allreference)
+      //      {
+     //           Response.Write("<br/>Path To Detail Descriptions = " + mytotref.propertyreference + "<br/>");
+     //       }
 
 
 

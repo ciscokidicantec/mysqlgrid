@@ -8,5 +8,7 @@ namespace mysqlgrid
     public class getpropref
     {
         public string propertyreference { get; set; }
+        public int matchindex { get; set; }
+
     }
 }

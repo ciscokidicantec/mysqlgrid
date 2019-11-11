@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using System.Text.RegularExpressions;
+
+
 namespace mysqlgrid
 {
     public class Getwebparts
@@ -41,6 +44,22 @@ namespace mysqlgrid
         }
 
 
+        public List<getpropref> patermatchpropertyreference(string htmlpage, string pattern)
+        {
+            List<getpropref> propertyref = new List<getpropref>();
+           // pattern = @"\b\w+es\b";
+            Regex rgx = new Regex(pattern);
+            string totalurl = "http://www.zoopla.co.uk/";
+
+            foreach (Match match in rgx.Matches(htmlpage))
+            {
+
+                totalurl = "";
+                propertyref.Add(new getpropref{propertyreference = totalurl + match.Value, matchindex = match.Index });
+            }
+
+            return propertyref;
+        }
 
 
     }
