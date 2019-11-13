@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 using System.Text.RegularExpressions;
-
+using System.Globalization;
 
 namespace mysqlgrid
 {
@@ -46,16 +46,26 @@ namespace mysqlgrid
 
         public List<getpropref> patermatchpropertyreference(string htmlpage, string pattern)
         {
-            List<getpropref> propertyref = new List<getpropref>();
-           // pattern = @"\b\w+es\b";
-            Regex rgx = new Regex(pattern);
-            string totalurl = "http://www.zoopla.co.uk/";
+            RegionInfo country = new RegionInfo(new CultureInfo("en-GB", false).LCID);
 
+            List<getpropref> propertyref = new List<getpropref>();
+
+            Regex rgx = new Regex(pattern);
+            string totalurl = "http://www.zoopla.co.uk";
+            int extractpos;
+            string retpagenostring;
+
+            //<a class="photo-hover" href="/for-sale/details/53305860">
+
+            //split out the <a href text
             foreach (Match match in rgx.Matches(htmlpage))
             {
+                //extractpos = pattern.IndexOf("<a href", 0);
+                extractpos = pattern.IndexOf("href=",0);
 
-                totalurl = "";
-                propertyref.Add(new getpropref{propertyreference = totalurl + match.Value, matchindex = match.Index });
+//                retpagenostring = match.Value.Substring("<a href".Length + 2, (match.Value.Length - "<a href".Length - 2));
+                //retpagenostring = match.Value.Substring(extractpos + "href=".Length + 1, 26);
+                //propertyref.Add(new getpropref{propertyreference = totalurl + retpagenostring, matchindex = match.Index, matchlength = match.Length });
             }
 
             return propertyref;

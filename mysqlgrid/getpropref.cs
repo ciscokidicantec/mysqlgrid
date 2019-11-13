@@ -9,6 +9,8 @@ namespace mysqlgrid
     {
         public string propertyreference { get; set; }
         public int matchindex { get; set; }
+        public int matchlength { get; set; }
+
 
     }
 }

@@ -9,15 +9,14 @@ using MySql.Data.MySqlClient;
 using System.Configuration;
 
 using System.Net;
-
-
+using System.Text.RegularExpressions;
 
 namespace mysqlgrid
 {
     public partial class getdetails : System.Web.UI.Page
     {
-
-        string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sn/?page_size=1&q=ab&results_sort=newest_listings&search_source=home&radius=0&pn=0";
+//        string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sn/?page_size=1&q=ab&results_sort=lowest_price&search_source=home&radius=0&pn=1";
+        string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sn/?page_size=5&q=ab&results_sort=lowest_price&search_source=home&radius=0&pn=1";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -51,6 +50,46 @@ namespace mysqlgrid
             mywebClient.Headers[HttpRequestHeader.Authorization] = "Basic "; //+ base64String;
             htmlpage = mywebClient.DownloadString(wholeurl);
 
+            //qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+
+            //string pagepattern = "/for-sale/property/sn/?q=sn&search_source=home&radius=0&pn=";
+            //string pagepattern = "/for-sale/property/sn";
+            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"';
+            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/?p\\w+";
+            //"" + "page_size";
+            //=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"';
+
+            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=477" + '"';
+            string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
+
+            string totalurl = "https://www.zoopla.co.uk";
+            
+            
+            Regex regexlastpagenumber = new Regex(pagepattern);
+
+            foreach (Match mymatchpage in regexlastpagenumber.Matches(htmlpage))
+            {
+
+                Response.Write("<br/><br/>Page Matches = " + totalurl + mymatchpage.Value + ">" + mymatchpage.Value + "</a>");
+
+
+            }
+
+            return;
+
+
+                Response.Write("Start of href");
+
+            string getnumberofpages = "<br/><br/><a href=" + '"' + "https://www.zoopla.co.uk/for-sale/property/sn/?q=sn&search_source=home&radius=0&pn=3" + '"' + ">" + "Next Page Number To Click" + "</a><br/><br/>";
+            Response.Write(getnumberofpages);
+
+        //    Regex rgxgroup = new Regex(pagepattern);
+        //    Match match = Regex.Match(htmlpage, "mypattern");
+
+
+            Response.Write("End of href");
+
+
             //Response.Write("<br/>url used = " + htmlpage + "<br/>");
             //Find references
             //https://www.zoopla.co.uk/for-sale/details/53283801
@@ -62,8 +101,61 @@ namespace mysqlgrid
             //List<getpropref> allreference = getpathref.Getpropertyreferences(htmlpage, "<a href=" + '"' + "/for-sale/details/", "?");
 
             Getwebparts getpathrefregex = new Getwebparts();
-//            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d[?]");
-            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d?");
+
+            // string mypattern = @"<a href=" + '"' + "/for-sale/details/\\d{8}?";
+            //string mypattern = "<a href=" + '"' + "/for-sale/details/\\d{8}";
+            //string mypattern = "<a class="photo-hover" href="/for-sale/details/53305860">
+            //string mypattern = "<a class=" + '"' + "photo-hover" + '"' + " href=" + '"' + "/for-sale/details/\\d{8}";
+            //string mypattern = "<a class=" + '"' + "photo-hover" + '"' + " href=" + '"' + "/for-sale/details/\\d{8}";
+            //string mypattern = "<a class=" + '"' + "photo-hover" + '"' + " href=" + '"' + "(?<groupmario>/for-sale/details/\\d{8})";
+            string mypattern = "(?<groupclass><a class=)" + '"' + "(?<grouphover>photo-hover)" + '"' + "(?<grouphref> href=)" + '"' + "(?<groupmario>/for-sale/details/\\d{8})";
+
+            // Match extractgroupmario;
+
+            Regex rgxgroup = new Regex(mypattern);
+            Match match = Regex.Match(htmlpage, "mypattern");
+
+            string website = "https://www.zoopla.co.uk";
+
+
+            foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
+            {
+              //  ListBox1.Items.Add(mymatchgroup.Value);
+                ListBox1.Items.Add(mymatchgroup.Groups["groupmario"].Value);
+                ListBox1.Items.Add(mymatchgroup.Groups["grouphref"].Value);
+                ListBox1.Items.Add(mymatchgroup.Groups["grouphover"].Value);
+                ListBox1.Items.Add(mymatchgroup.Groups["groupclass"].Value);
+                ListBox1.Items.Add(mymatchgroup.Groups[0].Value);
+            }
+
+            foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
+            {
+                ListBox2.Items.Add(website + mymatchgroup.Groups["groupmario"].Value);
+            }
+
+            int hitc = 0;
+
+            foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
+            {
+                ListBox3.Items.Add("<a href=" + '"' + website + mymatchgroup.Groups["groupmario"].Value + '"' + ">" + " Hit Number = " + hitc + "</a>");
+                hitc += 1;
+
+                Response.Write("<br/><a href=" + '"' + website + mymatchgroup.Groups["groupmario"].Value + '"' + "target=" + '"' + "_blank" + '"' + ">" + website + mymatchgroup.Groups["groupmario"].Value + " Hit Number = " + hitc + "</a>");
+
+            }
+
+
+
+            //< a class="photo-hover" href="/for-sale/details/53305860">
+
+
+
+            //            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d[?]");
+            //            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d{8}?search_identifier=");
+
+
+            List< getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, mypattern);
+
 
             int mycounter = 0;
             string buildancor = "";
@@ -77,7 +169,7 @@ namespace mysqlgrid
                 //buildancor = "<br/>" + mytotrefregex.propertyreference.ToString() + '"' + "https://ciscokidicantec.mario.wakeham.name/" + '"' + ">My Google Web Site " + mytotrefregex.matchindex.ToString() + "<a/>" + "<br/>";
                 //buildancor = "<br/>" + mytotrefregex.propertyreference.ToString() + '"' + "https://ciscokidicantec.mario.wakeham.name/" + '"' + ">My Google Web Site " + mytotrefregex.matchindex.ToString() + "<a/>" + "<br/>";
 
-                buildancor = "<br/>" + mytotrefregex.propertyreference.ToString();
+                buildancor = "<br/><br/>" + mytotrefregex.propertyreference.ToString();
 
                 Response.Write(buildancor);
                 mycounter++;
