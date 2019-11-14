@@ -15,8 +15,8 @@ namespace mysqlgrid
 {
     public partial class getdetails : System.Web.UI.Page
     {
-//        string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sn/?page_size=1&q=ab&results_sort=lowest_price&search_source=home&radius=0&pn=1";
-        string wholeurl = "https://www.zoopla.co.uk/for-sale/property/sn/?page_size=5&q=ab&results_sort=lowest_price&search_source=home&radius=0&pn=1";
+        string wholeurl = "https://www.zoopla.co.uk/for-sale/houses/sn/?beds_min=3&price_max=2000000&property_type=houses&price_min=10000&page_size=25&q=sn&results_sort=lowest_price&search_source=refine&radius=40&pn=14";
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -52,55 +52,38 @@ namespace mysqlgrid
 
             //qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 
-            //string pagepattern = "/for-sale/property/sn/?q=sn&search_source=home&radius=0&pn=";
-            //string pagepattern = "/for-sale/property/sn";
-            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"';
-            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/?p\\w+";
-            //"" + "page_size";
-            //=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"';
 
-            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=477" + '"';
-            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
-            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
-
-
-            //< a href = "/for-sale/property/sn/\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2"\s\s\s\s\s\s\s>Next</a>
-            //   string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"' + "\\s{7}>Next</a>";
-            //<a href="/for-sale/property/sn/\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2"\s{1}\r\n\s\s\s\s>Next</a>
-
-            string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"' + "\\s{1}\\r\\n\\s{4}>Next</a>\r\n";
-
-//qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
- //       public static Regex regex = new Regex(
-//      "<a href=\"/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;" +
-//      "results_sort=lowest_price&amp;search_source=home&amp;radius=" +
-//      "0&amp;pn=2\"\\s{1}\\r\\n\\s{4}>Next</a>\r\n",
-//    RegexOptions.CultureInvariant
-//    | RegexOptions.Compiled
-//    );
+            // string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=\\d{0,5}&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=(?<grouppagenumer>\\d{0,5})" + '"';
+            string pagepattern = "<a href=" + '"' + "/for-sale/houses/sn/\\?beds_min=\\d{0,3}&amp;price_max=\\d{0,10}&amp;property_type=houses&amp;price_min=\\d{0,10}&amp;page_size=\\d{0,5}&amp;q=sn&amp;results_sort=lowest_price&amp;search_source=refine&amp;radius=\\d{0,3}&amp;pn=(?<grouppagenumer>\\d{0,5})" + '"';
 
 
 
 
+             //ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 
-
-
-        //ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-
-
-
-        string totalurl = "https://www.zoopla.co.uk";
+             string totalurl = "https://www.zoopla.co.uk";
             
             
             Regex regexlastpagenumber = new Regex(pagepattern);
 
+            int biggestnumber = 0;
+            int pagenumber = 0;
+
             foreach (Match mymatchpage in regexlastpagenumber.Matches(htmlpage))
             {
+                
+                Response.Write("<br/><br/>Page Numbers That Match = " + mymatchpage.Groups["grouppagenumer"].Value + "<br/>");
 
-                Response.Write("<br/><br/>Page Matches = " + totalurl + mymatchpage.Value + ">" + mymatchpage.Value + "</a>");
+                //pagenumber = mymatchpage.Groups["grouppagenumer"].Value.Max();
 
-
+                pagenumber = int.Parse(mymatchpage.Groups["grouppagenumer"].Value);
+                if (pagenumber > biggestnumber)
+                {
+                    biggestnumber = pagenumber;
+                }
             }
+
+            Response.Write("Maximum Page Number = " + biggestnumber.ToString());
 
             return;
 
