@@ -60,9 +60,36 @@ namespace mysqlgrid
             //=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"';
 
             //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=477" + '"';
-            string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
+            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
+            //string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=\\d\\d\\d" + '"';
 
-            string totalurl = "https://www.zoopla.co.uk";
+
+            //< a href = "/for-sale/property/sn/\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2"\s\s\s\s\s\s\s>Next</a>
+            //   string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"' + "\\s{7}>Next</a>";
+            //<a href="/for-sale/property/sn/\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2"\s{1}\r\n\s\s\s\s>Next</a>
+
+            string pagepattern = "<a href=" + '"' + "/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;results_sort=lowest_price&amp;search_source=home&amp;radius=0&amp;pn=2" + '"' + "\\s{1}\\r\\n\\s{4}>Next</a>\r\n";
+
+//qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+ //       public static Regex regex = new Regex(
+//      "<a href=\"/for-sale/property/sn/\\?page_size=5&amp;q=ab&amp;" +
+//      "results_sort=lowest_price&amp;search_source=home&amp;radius=" +
+//      "0&amp;pn=2\"\\s{1}\\r\\n\\s{4}>Next</a>\r\n",
+//    RegexOptions.CultureInvariant
+//    | RegexOptions.Compiled
+//    );
+
+
+
+
+
+
+
+        //ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+
+
+
+        string totalurl = "https://www.zoopla.co.uk";
             
             
             Regex regexlastpagenumber = new Regex(pagepattern);
