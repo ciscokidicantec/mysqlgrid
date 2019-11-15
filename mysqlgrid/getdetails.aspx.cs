@@ -15,7 +15,7 @@ namespace mysqlgrid
 {
     public partial class getdetails : System.Web.UI.Page
     {
-        string wholeurl = "https://www.zoopla.co.uk/for-sale/houses/sn/?beds_min=3&price_max=2000000&property_type=houses&price_min=10000&page_size=25&q=sn&results_sort=lowest_price&search_source=refine&radius=40&pn=14";
+        string wholeurl = "https://www.zoopla.co.uk/for-sale/houses/sn/?beds_min=3&price_max=2000000&property_type=houses&price_min=10000&page_size=25&q=sn&results_sort=lowest_price&search_source=refine&radius=0&pn=14";
 
 
         protected void Page_Load(object sender, EventArgs e)
@@ -85,7 +85,7 @@ namespace mysqlgrid
 
             Response.Write("Maximum Page Number = " + biggestnumber.ToString());
 
-            return;
+            //return;
 
 
                 Response.Write("Start of href");
@@ -144,15 +144,30 @@ namespace mysqlgrid
             }
 
             int hitc = 0;
+            string fullurl;
+            Downloadpage mydetailshtmlpage;
+            string myhtmlreturned;
 
             foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
             {
                 ListBox3.Items.Add("<a href=" + '"' + website + mymatchgroup.Groups["groupmario"].Value + '"' + ">" + " Hit Number = " + hitc + "</a>");
                 hitc += 1;
 
+                
                 Response.Write("<br/><a href=" + '"' + website + mymatchgroup.Groups["groupmario"].Value + '"' + "target=" + '"' + "_blank" + '"' + ">" + website + mymatchgroup.Groups["groupmario"].Value + " Hit Number = " + hitc + "</a>");
+                fullurl = website + mymatchgroup.Groups["groupmario"].Value;
+                mydetailshtmlpage = new Downloadpage();
+                myhtmlreturned = mydetailshtmlpage.Downloadhtmlpage(fullurl);
+                //Now pick up the description <div class="dp-description__text"> on next lines try regex <div class="dp-description__text">.\n.*\n.*</div>
+                //public static Regex regex = new Regex(
+                //"<div class=\"dp-description__text\">.\\n.*\\n.*</div>",
+                //RegexOptions.CultureInvariant
+                // | RegexOptions.Compiled
+                //  );
 
-            }
+
+
+    }
 
 
 

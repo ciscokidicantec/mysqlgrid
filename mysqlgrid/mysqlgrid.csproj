@@ -101,6 +101,7 @@
     <Compile Include="downloadimage.aspx.designer.cs">
       <DependentUpon>downloadimage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="downloadpage.cs" />
     <Compile Include="getdetails.aspx.cs">
       <DependentUpon>getdetails.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
