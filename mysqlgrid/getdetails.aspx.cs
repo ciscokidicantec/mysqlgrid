@@ -148,6 +148,11 @@ namespace mysqlgrid
             Downloadpage mydetailshtmlpage;
             string myhtmlreturned;
 
+            MyRegextraction Alldescriptions;
+            MyRegextraction Theprice;
+            MyRegextraction Thesummary;
+
+
             foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
             {
                 ListBox3.Items.Add("<a href=" + '"' + website + mymatchgroup.Groups["groupmario"].Value + '"' + ">" + " Hit Number = " + hitc + "</a>");
@@ -158,22 +163,50 @@ namespace mysqlgrid
                 fullurl = website + mymatchgroup.Groups["groupmario"].Value;
                 mydetailshtmlpage = new Downloadpage();
                 myhtmlreturned = mydetailshtmlpage.Downloadhtmlpage(fullurl);
-                //Now pick up the description <div class="dp-description__text"> on next lines try regex <div class="dp-description__text">.\n.*\n.*</div>
-                //public static Regex regex = new Regex(
-                //"<div class=\"dp-description__text\">.\\n.*\\n.*</div>",
-                //RegexOptions.CultureInvariant
-                // | RegexOptions.Compiled
-                //  );
+
+                //<span class="dp-features-list__text">3 bedrooms</span>
+                //<span class="dp-features-list__text">1 bathroom</span>
+                //<span class="dp-features-list__text">1 reception room</span>
+
+                //Pick up the property summary
+                string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + ".*" + "," + ".*";
+
+
+                Thesummary = new MyRegextraction();
+                List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
+
+                foreach (var showsummary in Gotsummary)
+                {
+                    Response.Write("<br/>Returned Summary = " + showsummary.PropertyDescription + "<br/>");
+                }
 
 
 
-    }
+
+                //Get The Properties price
+                string myregexprice = "\\s{0,50}<p class=\"ui-pricing__main-price ui-text-t4\">" + "Â£" + "\\d{0,10}" + "," + "\\d{0,10}" + "</p>";
+
+                Theprice = new MyRegextraction();
+                List<MyRegextraction> Gotprice = Theprice.GetDescription(myhtmlreturned, myregexprice);
+
+                foreach (var showprice in Gotprice)
+                {
+                    Response.Write("<br/>Returned Price = " + showprice.PropertyDescription + "<br/>");
+                }
 
 
+                //Now pick up the description for each property
+                string myregpat = "\\n\\s{0,50}<div class=\"dp-description__text\">.*\\n\\s{0,50" + "}.*\\n\\s{0,50}</div>";
 
-            //< a class="photo-hover" href="/for-sale/details/53305860">
+                Alldescriptions = new MyRegextraction();
+                List<MyRegextraction> Gotdes = Alldescriptions.GetDescription(myhtmlreturned, myregpat);
 
+                foreach (var showdes in Gotdes)
+                {
+                    Response.Write("<br/>Returned Descriptions = " + showdes.PropertyDescription + "<br/>") ;
+                }
 
+            }
 
             //            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d\\d\\d\\d\\d\\d\\d\\d[?]");
             //            List<getpropref> patermatchpropertyreference = getpathrefregex.patermatchpropertyreference(htmlpage, "<a href=" + '"' + "/for-sale/details/\\d{8}?search_identifier=");
