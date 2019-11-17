@@ -151,6 +151,7 @@ namespace mysqlgrid
             MyRegextraction Alldescriptions;
             MyRegextraction Theprice;
             MyRegextraction Thesummary;
+            MyRegextraction Thebulletts;
 
 
             foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
@@ -164,13 +165,36 @@ namespace mysqlgrid
                 mydetailshtmlpage = new Downloadpage();
                 myhtmlreturned = mydetailshtmlpage.Downloadhtmlpage(fullurl);
 
-                //<span class="dp-features-list__text">3 bedrooms</span>
-                //<span class="dp-features-list__text">1 bathroom</span>
-                //<span class="dp-features-list__text">1 reception room</span>
+                //Links for this property
+
+
+
+                //Get Bullet Poimts
+                string myregexbulletpoints = "\\s{0,50}<li class=\"dp-features-list__item\">.*\\n\\s{0,100}.*\\n\\s{0,100}</li>";
+
+                Thebulletts = new MyRegextraction();
+                List<MyRegextraction> Gotbulletts = Thebulletts.GetDescription(myhtmlreturned, myregexbulletpoints);
+
+                foreach (var showbulletts in Gotbulletts)
+                {
+                    Response.Write("<br/>Returned Bullett Points = " + showbulletts.PropertyDescription + "<br/>");
+                }
+
+
+
+                //Get the featurers
+                string myregexfeatures = "\\s{0,50}<span class=\"dp-features-list__text\">.*";
+
+                Thesummary = new MyRegextraction();
+                List<MyRegextraction> Gotfeatures = Thesummary.GetDescription(myhtmlreturned, myregexfeatures);
+
+                foreach (var showfeatures in Gotfeatures)
+                {
+                    Response.Write("<br/>Returned features = " + showfeatures.PropertyDescription + "<br/>");
+                }
 
                 //Pick up the property summary
                 string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + ".*" + "," + ".*";
-
 
                 Thesummary = new MyRegextraction();
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
@@ -179,9 +203,6 @@ namespace mysqlgrid
                 {
                     Response.Write("<br/>Returned Summary = " + showsummary.PropertyDescription + "<br/>");
                 }
-
-
-
 
                 //Get The Properties price
                 string myregexprice = "\\s{0,50}<p class=\"ui-pricing__main-price ui-text-t4\">" + "Â£" + "\\d{0,10}" + "," + "\\d{0,10}" + "</p>";
