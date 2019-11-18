@@ -10,6 +10,16 @@ using System.Configuration;
 
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Drawing;
+
+using System.IO;
+using System.Drawing.Drawing2D;
+using System.Json;
+using System.Web.Script.Serialization;
+
+
+
+
 
 namespace mysqlgrid
 {
@@ -153,6 +163,15 @@ namespace mysqlgrid
             MyRegextraction Thesummary;
             MyRegextraction Thebulletts;
 
+            string fileName;
+            string imageUrl;
+            string fileindex;
+
+            Stream streamdata;
+
+            WebClient client;
+            Bitmap bitmap;
+
 
             foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
             {
@@ -165,9 +184,30 @@ namespace mysqlgrid
                 mydetailshtmlpage = new Downloadpage();
                 myhtmlreturned = mydetailshtmlpage.Downloadhtmlpage(fullurl);
 
-                //Links for this property
+
+                string imageUrldownload;
+                imageUrldownload = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+
+                //Download images without saving to disk place into database
+
+                client = new WebClient();
+                byte[] imagebytes = client.DownloadData(imageUrldownload);
+                filesizeKbytes = imagebytes.Length;
+
+                //SVG for this property
+
+                imageUrl = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
 
 
+                //fileindex = "abc123";
+                fileName = "testjpg";
+
+                fileName = "C:\\Compress\\" + fileName + ".jpg";
+
+                streamdata = client.OpenRead(imageUrl);
+                bitmap = new Bitmap(streamdata);
+                bitmap.Save(fileName);
+                bitmap.Dispose();
 
                 //Get Bullet Poimts
                 string myregexbulletpoints = "\\s{0,50}<li class=\"dp-features-list__item\">.*\\n\\s{0,100}.*\\n\\s{0,100}</li>";
