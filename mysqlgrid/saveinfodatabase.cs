@@ -31,7 +31,9 @@ namespace mysqlgrid
 
             int numberofrecords = 0;
             string fileName;
-            Guid fileindex;
+            byte[] fileindex;
+            //int fileindex = 1009;
+
 
             String[] myarrayurlimage = new String[4];
 
@@ -66,19 +68,21 @@ namespace mysqlgrid
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            Guid myguid;
+
             myConn.Open();
 
-            fileindex = Guid.NewGuid();
+            string newguidstring;
 
             try
             {
-
                 foreach (string myimageUrl in myarrayurlimage)
                 {
 
-                    myguid = Guid.NewGuid();
+                    Getdatabaseguid Getdatabaseguid = new Getdatabaseguid();
+                    newguidstring = Getdatabaseguid.Getdatabaseguidarray();
 
+                //    myguid = Guid.NewGuid();
+                //    mystringguid = myguid.ToString();
 
 
                     cmd.Connection = myConn;
@@ -101,7 +105,7 @@ namespace mysqlgrid
                         "@inserteddate)";
 
                     cmd = new MySqlCommand(CmdString, myConn);
-                    cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar,36);
                     cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
                     cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
                     cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
@@ -109,18 +113,22 @@ namespace mysqlgrid
                     cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
                     cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
 
-                    cmd.Parameters["@imageindex"].Value = fileindex;
+                    cmd.Parameters["@imageindex"].Value = newguidstring;
                     cmd.Parameters["@image"].Value = imagebytes;
-                    cmd.Parameters["@myguid"].Value = myguid;
+
+                    cmd.Parameters["@myguid"].Value = Getdatabaseguid.Getdatabaseguidarray();
                     cmd.Parameters["@originalfilename"].Value = imageUrl;
                     cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
                     cmd.Parameters["@savedondiskfilename"].Value = myimageUrl;
-                    cmd.Parameters["@inserteddate"].Value = DateTime.Now; ;
+                    cmd.Parameters["@inserteddate"].Value = DateTime.Now;
 
 
                     int RowsAffected = cmd.ExecuteNonQuery();
                     cmd.Dispose();
-                }
+
+                    }
+
+                    
                 }
                 catch (Exception ex)
             {

@@ -122,6 +122,11 @@ namespace mysqlgrid
 
             Getwebparts getpathrefregex = new Getwebparts();
 
+
+
+
+//qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+
             // string mypattern = @"<a href=" + '"' + "/for-sale/details/\\d{8}?";
             //string mypattern = "<a href=" + '"' + "/for-sale/details/\\d{8}";
             //string mypattern = "<a class="photo-hover" href="/for-sale/details/53305860">
@@ -157,6 +162,8 @@ namespace mysqlgrid
             string fullurl;
             Downloadpage mydetailshtmlpage;
             string myhtmlreturned;
+            bool savethefile;
+
 
             MyRegextraction Alldescriptions;
             MyRegextraction Theprice;
@@ -165,12 +172,13 @@ namespace mysqlgrid
 
             string fileName;
             string imageUrl;
-            string fileindex;
 
             Stream streamdata;
 
             WebClient client;
             Bitmap bitmap;
+
+            int returnedrows;
 
 
             foreach (Match mymatchgroup in rgxgroup.Matches(htmlpage))
@@ -220,9 +228,11 @@ namespace mysqlgrid
                     Response.Write("<br/>Returned Bullett Points = " + showbulletts.PropertyDescription + "<br/>");
                 }
 
+                //Get Post Code
+//zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
 
-                //Get the featurers
+                //Get the features
                 string myregexfeatures = "\\s{0,50}<span class=\"dp-features-list__text\">.*";
 
                 Thesummary = new MyRegextraction();
@@ -234,7 +244,12 @@ namespace mysqlgrid
                 }
 
                 //Pick up the property summary
-                string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + ".*" + "," + ".*";
+                //Put in the groups to extract the address
+
+                //            string mypattern = "(?<groupclass><a class=)" + '"' + "(?<grouphover>photo-hover)" + '"' + "(?<grouphref> href=)" + '"' + "(?<groupmario>/for-sale/details/\\d{8})";
+
+
+                string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + "(?<groupaddress>.*)" + "," + "(?<grouppostcode>.*)";
 
                 Thesummary = new MyRegextraction();
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
@@ -266,6 +281,20 @@ namespace mysqlgrid
                 {
                     Response.Write("<br/>Returned Descriptions = " + showdes.PropertyDescription + "<br/>") ;
                 }
+
+
+                String[] myarrayurlimage = new String[4];
+
+                myarrayurlimage[0] = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+                myarrayurlimage[1] = "https://lc.zoocdn.com/c2a8a5af5cec2db187ae1a37d4f8d3965e9d5b87.jpg";
+                myarrayurlimage[2] = "https://media.rightmove.co.uk/dir/crop/10:9-16:9/78k/77900/73713541/77900_MAR190232_IMG_06_0000_max_476x317.jpg";
+                myarrayurlimage[3] = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
+
+                savethefile = true;
+                string filename = "abc";
+
+                Savetodatabase additemtodatabase = new Savetodatabase();
+                returnedrows = additemtodatabase.Savephototodatabase(myarrayurlimage, filename, savethefile);
 
             }
 
