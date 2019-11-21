@@ -249,10 +249,13 @@ namespace mysqlgrid
                 //            string mypattern = "(?<groupclass><a class=)" + '"' + "(?<grouphover>photo-hover)" + '"' + "(?<grouphref> href=)" + '"' + "(?<groupmario>/for-sale/details/\\d{8})";
 
 
-                string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + "(?<groupaddress>.*)" + "," + "(?<grouppostcode>.*)";
+                string myregexsummary = "\\s{0,50}<h2 class=\"ui-property-summary__address\">" + "(?<groupaddress>.*)" + "," + "(?<grouppostcode>.*)</h2>";
 
                 Thesummary = new MyRegextraction();
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
+
+
+
 
                 foreach (var showsummary in Gotsummary)
                 {
@@ -292,6 +295,10 @@ namespace mysqlgrid
 
                 savethefile = true;
                 string filename = "abc";
+
+
+//ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
 
                 Savetodatabase additemtodatabase = new Savetodatabase();
                 returnedrows = additemtodatabase.Savephototodatabase(myarrayurlimage, filename, savethefile);
