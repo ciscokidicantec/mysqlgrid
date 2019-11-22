@@ -169,9 +169,11 @@ namespace mysqlgrid
             MyRegextraction Theprice;
             MyRegextraction Thesummary;
             MyRegextraction Thebulletts;
+            MyRegextraction Theimages;
 
             string fileName;
             string imageUrl;
+            string myregeximages;
 
             Stream streamdata;
 
@@ -253,6 +255,46 @@ namespace mysqlgrid
 
                 Thesummary = new MyRegextraction();
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
+
+                //Get all the pictures
+                //\s{0,100}.*<img data-src=\"(?<groupimagesrc>.*.jpg)
+
+                myregeximages = "\\s{0,100}.*<img data-src=\"(?<groupimagesrc>.*.jpg)";
+
+                Theimages = new MyRegextraction();
+                List<MyRegextraction> Gotimages = Theimages.GetDescription(myhtmlreturned, myregeximages);
+
+                string fullimagep;
+                int firstStringPosition = 0;
+
+                int myindex = 0;
+
+                foreach (var showimages in Gotimages)
+                {
+                    Response.Write("<br/>Returned features = " + showimages.PropertyDescription + "<br/>");
+                    //fullimagep = showimages.PropertyDescription.Split('"');
+                    //start removing certain items from list<T>
+                    firstStringPosition = showimages.PropertyDescription.IndexOf("https:");
+                    if (firstStringPosition > 0)
+                    {
+                        fullimagep = showimages.PropertyDescription.Substring(firstStringPosition, showimages.PropertyDescription.Length - (firstStringPosition + "httsp=".Length));
+                        //Download the image
+                    }
+                    else
+                    {
+
+                        Gotimages.RemoveAt(myindex);
+
+                    }
+
+                    myindex += 1;
+
+
+                }
+
+
+
+
 
 
 
@@ -339,6 +381,11 @@ namespace mysqlgrid
 
 
 
+
+        }
+
+        protected void ListBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }
