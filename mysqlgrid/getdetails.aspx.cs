@@ -257,39 +257,28 @@ namespace mysqlgrid
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
 
                 //Get all the pictures
-                //\s{0,100}.*<img data-src=\"(?<groupimagesrc>.*.jpg)
-
                 myregeximages = "\\s{0,100}.*<img data-src=\"(?<groupimagesrc>.*.jpg)";
 
                 Theimages = new MyRegextraction();
                 List<MyRegextraction> Gotimages = Theimages.GetDescription(myhtmlreturned, myregeximages);
 
-                string fullimagep;
-                int firstStringPosition = 0;
-
                 int myindex = 0;
 
                 foreach (var showimages in Gotimages)
                 {
-                    Response.Write("<br/>Returned features = " + showimages.PropertyDescription + "<br/>");
-                    //fullimagep = showimages.PropertyDescription.Split('"');
-                    //start removing certain items from list<T>
-                    firstStringPosition = showimages.PropertyDescription.IndexOf("https:");
-                    if (firstStringPosition > 0)
+                    myindex += 1;
+
+                    if (myindex % 2 == 0)
                     {
-                        fullimagep = showimages.PropertyDescription.Substring(firstStringPosition, showimages.PropertyDescription.Length - (firstStringPosition + "httsp=".Length));
-                        //Download the image
+                        Response.Write("Number is even");
+                        //This is the List<T> item which contains the correct image path - download the image itself
+                        Response.Write("<br/>Full Images Path = " + showimages.PropertyDescription);
+
                     }
                     else
                     {
-
-                        Gotimages.RemoveAt(myindex);
-
+                        Response.Write("<br/>Number is odd");
                     }
-
-                    myindex += 1;
-
-
                 }
 
 

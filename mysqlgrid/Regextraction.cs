@@ -20,22 +20,8 @@ namespace mysqlgrid
             List<MyRegextraction> propertydes = new List<MyRegextraction>();
             Regex rgxgroup = new Regex(regexpattern);
 
-            int numberofgroups = 0;
-
-
-//            foreach (Match mymatchdesc in rgxgroup.Matches(searcttext))
-//            {
-//                propertydes.Add(new MyRegextraction { PropertyDescription = mymatchdesc.Groups[numberofgroups].Value });
-//                numberofgroups += 1;
-//            }
-
-            //return propertydes;
-
-
             foreach (Match mymatchdesc in rgxgroup.Matches(searcttext))
             {
-                propertydes.Add(new MyRegextraction { PropertyDescription = mymatchdesc.Value });
-                numberofgroups = mymatchdesc.Groups.Count;
 
                 for (int i = 0; i < mymatchdesc.Groups.Count; i++)
                 {
