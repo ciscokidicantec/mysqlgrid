@@ -263,6 +263,10 @@ namespace mysqlgrid
                 List<MyRegextraction> Gotimages = Theimages.GetDescription(myhtmlreturned, myregeximages);
 
                 int myindex = 0;
+                bool insertsuccess;
+
+                insertimagetodatabase Insertimagetodbase = new insertimagetodatabase();
+
 
                 foreach (var showimages in Gotimages)
                 {
@@ -272,8 +276,18 @@ namespace mysqlgrid
                     {
                         Response.Write("Number is even");
                         //This is the List<T> item which contains the correct image path - download the image itself
+                        //Then insert it into the database
                         Response.Write("<br/>Full Images Path = " + showimages.PropertyDescription);
+                        insertsuccess = Insertimagetodbase.Insertimagetodbase(showimages.PropertyDescription, "stuff");
+                        if (insertsuccess)
+                        {
+                            Response.Write("Successful Database Update");
+                        }
+                        else
+                        {
+                            Response.Write("Unsuccessful Database Update");
 
+                        }
                     }
                     else
                     {
