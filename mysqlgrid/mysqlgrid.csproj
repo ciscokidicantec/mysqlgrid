@@ -122,6 +122,7 @@
     </Compile>
     <Compile Include="imagedownloadpath.cs" />
     <Compile Include="insertimagetodatabase.cs" />
+    <Compile Include="Insertsvgtodatabase.cs" />
     <Compile Include="jsoninsert.aspx.cs">
       <DependentUpon>jsoninsert.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

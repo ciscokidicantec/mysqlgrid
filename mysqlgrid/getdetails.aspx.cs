@@ -170,6 +170,8 @@ namespace mysqlgrid
             MyRegextraction Thesummary;
             MyRegextraction Thebulletts;
             MyRegextraction Theimages;
+            MyRegextraction Thesvgs;
+
 
             string fileName;
             string imageUrl;
@@ -196,28 +198,61 @@ namespace mysqlgrid
 
 
                 string imageUrldownload;
+
                 imageUrldownload = "https://pbprodimages.azureedge.net/images/medium/2a00f1ab-a7cb-4315-b247-c3d40636f041.jpg";
 
-                //Download images without saving to disk place into database
+                //Download SVG images without saving to disk place into database
+                //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmSVGmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
-                client = new WebClient();
-                byte[] imagebytes = client.DownloadData(imageUrldownload);
-                filesizeKbytes = imagebytes.Length;
+                //string mysvgimages = "\\s{0,50}<li class=\"dp-features-list__item\">.*\\n\\s{0,100}.*\\n\\s{0,100}</li>";
+
+                //s{0,150}\\.*\\"https://[a-zA-z].*.svg
+
+                //string mysvgimages = "s{0,150}\\.*\\\"(?<groupclass>https://[a-zA-z].*.svg)";
+
+                //"\\s{0,100}src=\\\"(?<mariogroup>).*svg",
+
+                string mysvgimages = "(?<groupclass>\\s{0,100})src=\\\"(<?<groupclass>.*svg)";
+
+                //string mysvgimages = "\\s{0,150}\\.*.src=\\"(?<groupclass>https://[a-zA-z].*.svg)";
+                Thesvgs = new MyRegextraction();
+
+                List<MyRegextraction> Gotsvg = Thesvgs.GetDescription(myhtmlreturned, mysvgimages);
+
+                foreach (var showsvg in Gotsvg)
+                {
+                    Response.Write("<br/>Returned SVG Points = " + showsvg.PropertyDescription + "<br/>");
+                }
+
+
+                bool imstatus;
+
+                Insertsvgtodatabase Insimagedb = new Insertsvgtodatabase();
+
+                //imstatus = Insimagedb.Insimagetodb("https://r.zoocdn.com/assets/safari-pinned-tab.svg", false);
+
+                imstatus = Insimagedb.Insimagetodb(Gotsvg, false);
+
+
+                imageUrl = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
+
+                //client = new WebClient();
+                //byte[] imagebytes = client.DownloadData(imageUrldownload);
+                //filesizeKbytes = imagebytes.Length;
 
                 //SVG for this property
 
                 imageUrl = "https://lc.zoocdn.com/32d3e36d37e1b758b4fa096e9078fd3bd1742ade.jpg";
 
 
-                //fileindex = "abc123";
-                fileName = "testjpg";
+//                fileName = "testjpg";
 
-                fileName = "C:\\Compress\\" + fileName + ".jpg";
+//                fileName = "C:\\Compress\\" + fileName + ".jpg";
 
-                streamdata = client.OpenRead(imageUrl);
-                bitmap = new Bitmap(streamdata);
-                bitmap.Save(fileName);
-                bitmap.Dispose();
+//                streamdata = client.OpenRead(imageUrl);
+//                bitmap = new Bitmap(streamdata);
+//                bitmap.Save(fileName);
+//                bitmap.Dispose();
 
                 //Get Bullet Poimts
                 string myregexbulletpoints = "\\s{0,50}<li class=\"dp-features-list__item\">.*\\n\\s{0,100}.*\\n\\s{0,100}</li>";
@@ -255,6 +290,24 @@ namespace mysqlgrid
 
                 Thesummary = new MyRegextraction();
                 List<MyRegextraction> Gotsummary = Thesummary.GetDescription(myhtmlreturned, myregexsummary);
+
+                //Download svg https://r.zoocdn.com/assets/safari-pinned-tab.svg
+
+            //    string Fileurl = "https://r.zoocdn.com/assets/safari-pinned-tab.svg";
+
+            //    WebClient GetSvgFile = new WebClient();
+
+            //    byte[] gotsvgdata = GetSvgFile.DownloadData(Fileurl);
+
+           //     GetSvgFile.DownloadFile(Fileurl, "C:\\Users\\Public\\Documents\\guidsvgfilename.svg");
+
+
+                //WebClient client.downloadfile
+
+                //Get All SGV type images.
+
+
+
 
                 //Get all the pictures
                 myregeximages = "\\s{0,100}.*<img data-src=\"(?<groupimagesrc>.*.jpg)";
