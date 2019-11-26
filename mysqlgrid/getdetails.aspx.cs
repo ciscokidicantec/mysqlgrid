@@ -212,7 +212,10 @@ namespace mysqlgrid
 
                 //"\\s{0,100}src=\\\"(?<mariogroup>).*svg",
 
-                string mysvgimages = "(?<groupclass>\\s{0,100})src=\\\"(<?<groupclass>.*svg)";
+                //string mysvgimages = "(?<groupclass>\\s{0,100})src=\\\"(<?<groupclass>.*svg)";
+
+                string mysvgimages = "<img\\s.*=\"(?<groupclass>.*svg)";
+
 
                 //string mysvgimages = "\\s{0,150}\\.*.src=\\"(?<groupclass>https://[a-zA-z].*.svg)";
                 Thesvgs = new MyRegextraction();

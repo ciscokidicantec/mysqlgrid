@@ -40,6 +40,8 @@ namespace mysqlgrid
 
             fileindex = 10074;
 
+            string mysubstring;
+
             foreach (var imageUrl in Gotsvg)
             {
                 fileindex += 1;
@@ -56,7 +58,14 @@ namespace mysqlgrid
                 }
 
                 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                byte[] imagebytes = client.DownloadData(imageUrl.PropertyDescription);
+
+                mysubstring = imageUrl.PropertyDescription.Substring(0, 5);
+
+                //Check for the group only regex which is groupclass, normally the even parts of the list
+                if (mysubstring != "https") continue;
+
+
+                    byte[] imagebytes = client.DownloadData(imageUrl.PropertyDescription);
                 int filesizeKbytes = imagebytes.Length;
 
 
@@ -90,18 +99,19 @@ namespace mysqlgrid
                         "@inserteddate)";
 
                     cmd = new MySqlCommand(CmdString, myConn);
-                    cmd.Parameters.Add("@imageindex", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar,36);
                     cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
                     cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
                     cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);
                     cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
                     cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
                     cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
-
-                    cmd.Parameters["@imageindex"].Value = fileindex;
+                    Guid.NewGuid();
+                    cmd.Parameters["@imageindex"].Value = Guid.NewGuid();
+                    //cmd.Parameters["@imageindex"].Value = fileindex;
                     cmd.Parameters["@image"].Value = imagebytes;
                     cmd.Parameters["@myguid"].Value = myguid;
-                    cmd.Parameters["@originalfilename"].Value = imageUrl;
+                    cmd.Parameters["@originalfilename"].Value = imageUrl.PropertyDescription;
                     cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
                     cmd.Parameters["@savedondiskfilename"].Value = fileName;
                     cmd.Parameters["@inserteddate"].Value = DateTime.Now;
@@ -118,7 +128,7 @@ namespace mysqlgrid
                 conn.Close();
                 conn.Dispose();
 
-                return true;
+                //return true;
             }
             return true;
         }
