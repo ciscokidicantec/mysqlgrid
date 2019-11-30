@@ -5,8 +5,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.IO;
-using MySql.Data.MySqlClient;
 using System.Configuration;
+using MySql.Data.MySqlClient;
 
 namespace mysqlgrid
 {
@@ -57,8 +57,8 @@ namespace mysqlgrid
 
             Label1.Text = "Just Started";
 
-            using (MySqlConnection con = new MySqlConnection(constr))
-            {
+            MySqlConnection con = new MySqlConnection(constr);
+            
                 //    cmd.Parameters.AddWithValue("@imageindex", imageindex);
                 //    cmd.Parameters.AddWithValue("@filedirectory", filedirectory);
 
@@ -92,7 +92,7 @@ namespace mysqlgrid
                         mydirerror = ex.Message;
                     }
                 }
-            }
+            
         }
 
         protected void Button3_Click(object sender, EventArgs e)

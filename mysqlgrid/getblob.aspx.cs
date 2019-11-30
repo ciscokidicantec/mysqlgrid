@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using System.Configuration;
 using System.Data;
 using System.IO;
-
+using MySql.Data.MySqlClient;
 
 namespace mysqlgrid
 {

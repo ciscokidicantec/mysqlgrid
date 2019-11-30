@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 using System.Net;
 using System.IO;
 using System.Drawing;
-using MySql.Data.MySqlClient;
 using System.Configuration;
 //using System.Drawing.Imaging;
 //using System.Web.UI.WebControls;
@@ -18,10 +17,8 @@ using System.Configuration;
 using System.Drawing.Drawing2D;
 using System.Json;
 using System.Web.Script.Serialization;
-
-
-
-
+using MySql.Data.MySqlClient;
+using MySql.Data;
 
 namespace mysqlgrid
 {
@@ -29,6 +26,13 @@ namespace mysqlgrid
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            string[] mysarray = new string[2];
+            mysarray[0] = "www";
+
+            Dummyparam mydum = new Dummyparam();
+            mydum.CreateMySqlCommand(mysarray); 
+
             Response.Write("got To Page Load");
         }
 
@@ -644,6 +648,37 @@ namespace mysqlgrid
                 //            GridView1.DataSource = MyImagesarray;
                 //            GridView1.DataBind();
             
+        }
+    }
+
+    internal class MySqlConnection
+    {
+        private string connStr;
+
+        public MySqlConnection()
+        {
+        }
+
+        public MySqlConnection(string connStr)
+        {
+            this.connStr = connStr;
+        }
+
+        public string ConnectionString { get; internal set; }
+
+        internal void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 }

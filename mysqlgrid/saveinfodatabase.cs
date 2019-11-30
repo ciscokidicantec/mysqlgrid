@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using MySql;
-using MySql.Data.MySqlClient;
+using mysqlgrid;
 using System.Configuration;
 
 using System.Net;
 using System.IO;
 using System.Drawing;
-//using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 
 
 
@@ -105,7 +104,7 @@ namespace mysqlgrid
                         "@inserteddate)";
 
                     cmd = new MySqlCommand(CmdString, myConn);
-                    cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar,36);
+                    cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar, 36);
                     cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
                     cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
                     cmd.Parameters.Add("@originalfilename", MySqlDbType.VarChar, 200);

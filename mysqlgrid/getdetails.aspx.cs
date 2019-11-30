@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using System.Configuration;
 
 using System.Net;
@@ -16,7 +16,7 @@ using System.IO;
 using System.Drawing.Drawing2D;
 using System.Json;
 using System.Web.Script.Serialization;
-
+using mysqlgrid;
 
 
 

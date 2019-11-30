@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using MySql.Data.MySqlClient;
+using mysqlgrid;
 using System.Configuration;
 using System.Net;
 using System.Drawing;
 using System.IO;
+using MySql.Data.MySqlClient;
+using MySql.Data;
+
 
 
 
@@ -15,7 +19,6 @@ namespace mysqlgrid
 {
     public class Insertsvgtodatabase
     {
-
         public bool Insimagetodb(List<MyRegextraction> Gotsvg, bool SavetoFile)
         {
             string fileName = "";
@@ -34,8 +37,14 @@ namespace mysqlgrid
             myConn.ConnectionString = connStr;
 
             MySqlCommand cmd = new MySqlCommand();
+
             cmd.Connection = conn;
+            //ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
+
+
+            //ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
             Guid myguid;
+
             myConn.Open();
 
             fileindex = 10074;
@@ -63,24 +72,20 @@ namespace mysqlgrid
 
                 //Check for the group only regex which is groupclass, normally the even parts of the list
                 if (mysubstring != "https") continue;
-
-
-                    byte[] imagebytes = client.DownloadData(imageUrl.PropertyDescription);
+                byte[] imagebytes = client.DownloadData(imageUrl.PropertyDescription);
                 int filesizeKbytes = imagebytes.Length;
 
 
                 byte[] imagecontent = new byte[imagebytes.Length];
 
-            //    var memoryStream = new MemoryStream(imagebytes);
-            //    bitmap = new Bitmap(memoryStream);
+                //    var memoryStream = new MemoryStream(imagebytes);
+                //    bitmap = new Bitmap(memoryStream);
 
                 myguid = Guid.NewGuid();
 
                 try
                 {
-
                     cmd.Connection = myConn;
-
                     string CmdString = "INSERT INTO estateporrtal.images(" +
                         "imageindex," +
                         "image," +
@@ -98,7 +103,7 @@ namespace mysqlgrid
                         "@savedondiskfilename," +
                         "@inserteddate)";
 
-                    cmd = new MySqlCommand(CmdString, myConn);
+                    cmd  = new MySqlCommand(CmdString, myConn);
                     cmd.Parameters.Add("@imageindex", MySqlDbType.VarChar,36);
                     cmd.Parameters.Add("@image", MySqlDbType.LongBlob);
                     cmd.Parameters.Add("@myguid", MySqlDbType.VarChar, 36);
@@ -106,16 +111,14 @@ namespace mysqlgrid
                     cmd.Parameters.Add("@imagesizeKbytes", MySqlDbType.Int32);
                     cmd.Parameters.Add("@savedondiskfilename", MySqlDbType.VarChar, 255);
                     cmd.Parameters.Add("@inserteddate", MySqlDbType.DateTime);
-                    Guid.NewGuid();
+                    //Guid.NewGuid();
                     cmd.Parameters["@imageindex"].Value = Guid.NewGuid();
-                    //cmd.Parameters["@imageindex"].Value = fileindex;
                     cmd.Parameters["@image"].Value = imagebytes;
                     cmd.Parameters["@myguid"].Value = myguid;
                     cmd.Parameters["@originalfilename"].Value = imageUrl.PropertyDescription;
                     cmd.Parameters["@imagesizeKbytes"].Value = filesizeKbytes;
                     cmd.Parameters["@savedondiskfilename"].Value = fileName;
                     cmd.Parameters["@inserteddate"].Value = DateTime.Now;
-
 
                     int RowsAffected = cmd.ExecuteNonQuery();
                     cmd.Dispose();
@@ -127,8 +130,6 @@ namespace mysqlgrid
                 }
                 conn.Close();
                 conn.Dispose();
-
-                //return true;
             }
             return true;
         }
